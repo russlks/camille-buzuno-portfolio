@@ -1,26 +1,239 @@
 @import "tailwindcss";
 
+/* Class-based theming: `.dark` on <html> = the "depth" theme. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+   Design tokens — Camille Buzuno
+   Two worlds: LIGHT (white) and DEPTH (near-black). Cold teal accent.
+--------------------------------------------------------------------------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #ffffff;
+  --bg-panel: #f5f7f7;
+  --fg: #0c0e0f;
+  --muted: #58686a;
+  --faint: #93a2a2;
+  --line: rgba(12, 24, 24, 0.05); /* technical grid */
+  --hair: rgba(12, 24, 24, 0.12); /* hairline borders */
+  --grid: rgba(12, 24, 24, 0.035); /* editorial column guides */
+  --grid-strong: rgba(12, 24, 24, 0.09); /* alignment markers */
+  --accent: #0d8f88; /* cold teal */
+  --accent-rgb: 13, 143, 136;
+  --accent-soft: rgba(13, 143, 136, 0.14);
+  --oyster-rgb: 20, 165, 175; /* richer cyan-teal, oyster only */
+  --coral-rgb: 255, 77, 77; /* vivid coral-red core (#FF4D4D) */
+  /* Shell depth (Layers 9 & 7): light theme → black outline + soft black inner shadow */
+  --shell-line: rgba(0, 0, 0, 0.92);
+  --shell-shade-rgb: 0, 0, 0;
+  --shell-shade-a: 0.27;
+  --glass: rgba(255, 255, 255, 0.55);
+
+  /* Oyster layers */
+  --oyster-fill: rgba(13, 143, 136, 0.06);
+  --oyster-fill-hover: rgba(13, 143, 136, 0.24);
+  --oyster-stroke: rgba(13, 143, 136, 0.28);
+  --oyster-stroke-hover: rgba(13, 143, 136, 0.85);
+  --oyster-lid: rgba(13, 143, 136, 0.08);
+}
+
+.dark {
+  --bg: #06090a;
+  --bg-panel: #0c1112;
+  --fg: #e7eeed;
+  --muted: #8ea3a1;
+  --faint: #56696a;
+  --line: rgba(160, 210, 208, 0.05);
+  --hair: rgba(160, 210, 208, 0.13);
+  --grid: rgba(160, 210, 208, 0.04);
+  --grid-strong: rgba(160, 210, 208, 0.1);
+  --accent: #35cabf;
+  --accent-rgb: 53, 202, 191;
+  --accent-soft: rgba(53, 202, 191, 0.15);
+  --oyster-rgb: 64, 220, 210; /* richer cyan-teal, oyster only */
+  --coral-rgb: 255, 77, 77; /* vivid coral-red core (#FF4D4D) */
+  /* Shell depth (Layers 9 & 7): depth theme → white outline + soft white inner glow */
+  --shell-line: rgba(255, 255, 255, 0.9);
+  --shell-shade-rgb: 255, 255, 255;
+  --shell-shade-a: 0.34;
+  --glass: rgba(10, 17, 18, 0.5);
+
+  --oyster-fill: rgba(53, 202, 191, 0.05);
+  --oyster-fill-hover: rgba(53, 202, 191, 0.22);
+  --oyster-stroke: rgba(53, 202, 191, 0.24);
+  --oyster-stroke-hover: rgba(53, 202, 191, 0.9);
+  --oyster-lid: rgba(53, 202, 191, 0.07);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-bg: var(--bg);
+  --color-bg-panel: var(--bg-panel);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-hair: var(--hair);
+  --color-accent: var(--accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: light;
+}
+.dark {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* Small restrained mono label helper */
+.label-mono {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------------------
+   Oyster navigation — each growth band is one route.
+   Teal/cyan glass shell with a soft coral core. Luxury, slow, organic motion.
+--------------------------------------------------------------------------- */
+.oyster-link {
+  cursor: pointer;
+  outline: none;
+}
+
+.oyster-band {
+  /* per-ring translucency set inline via --band-alpha (opacity hierarchy) */
+  fill: rgba(var(--oyster-rgb), var(--band-alpha, 0.1));
+  stroke: rgba(var(--oyster-rgb), 0.42);
+  stroke-width: 0.9;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    transform 0.9s cubic-bezier(0.16, 0.72, 0.24, 1),
+    fill 0.7s ease,
+    stroke 0.7s ease,
+    opacity 0.7s ease,
+    filter 0.7s ease;
+}
+
+/* Active band: gently expand, brighten, glow — no aggressive scaling. */
+.oyster-link:hover .oyster-band,
+.oyster-link:focus-visible .oyster-band {
+  fill: rgba(var(--oyster-rgb), 0.34);
+  stroke: rgba(var(--oyster-rgb), 0.95);
+  transform: scale(1.025);
+  filter: url(#lift);
+}
+
+/* Innermost layer (01) carries the soft coral core. */
+.oyster-band--core {
+  fill: rgba(var(--coral-rgb), calc(var(--band-alpha, 0.14) + 0.04));
+  stroke: rgba(var(--coral-rgb), 0.55);
+}
+.oyster-link:hover .oyster-band--core,
+.oyster-link:focus-visible .oyster-band--core {
+  fill: rgba(var(--coral-rgb), 0.42);
+  stroke: rgba(var(--coral-rgb), 0.95);
+}
+
+/* Recede every other band while one is active. */
+.oyster:has(.oyster-link:hover) .oyster-link:not(:hover) .oyster-band,
+.oyster:has(.oyster-link:focus-visible)
+  .oyster-link:not(:focus-visible)
+  .oyster-band {
+  opacity: 0.28;
+}
+
+.oyster-num {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  letter-spacing: 0.08em;
+  fill: rgba(var(--oyster-rgb), 0.75);
+  opacity: 0.55;
+  transition: opacity 0.7s ease, fill 0.7s ease;
+}
+
+/* Number hides on hover — the title takes its place inside the layer. */
+.oyster-link:hover .oyster-num,
+.oyster-link:focus-visible .oyster-num {
+  opacity: 0;
+}
+
+/* Section title revealed inside the hovered layer. */
+.oyster-title {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  fill: var(--fg);
+  opacity: 0;
+  transform: translateY(4px);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 0.72, 0.24, 1);
+}
+.oyster-title-n {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  letter-spacing: 0.1em;
+  fill: rgba(var(--oyster-rgb), 1);
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+.oyster-link:hover .oyster-title,
+.oyster-link:focus-visible .oyster-title,
+.oyster-link:hover .oyster-title-n,
+.oyster-link:focus-visible .oyster-title-n {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Non-interactive anatomy (contour, glow, core). */
+.oyster-anatomy {
+  pointer-events: none;
+}
+
+/* Luxury motion — slow breathing + tiny float. */
+@keyframes oyster-breathe {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-6px) scale(1.012);
+  }
+}
+.oyster-breathe {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: oyster-breathe 11s ease-in-out infinite;
+}
+
+/* Soft coral core breathing (offset phase). */
+@keyframes core-pulse {
+  0%,
+  100% {
+    opacity: 0.62;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.06);
+  }
+}
+.oyster-core {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: core-pulse 8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation: none !important;
+  }
 }
