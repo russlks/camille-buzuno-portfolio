@@ -11,18 +11,22 @@ export default function Home() {
       <SiteHeader />
 
       <main className="relative flex flex-1 flex-col">
-        {/* Identity */}
-        <div className="relative z-10 px-6 pt-10 sm:px-10 sm:pt-14">
+        {/* Identity — aligned to the left grid column. On desktop it rests
+            slightly above centre (~22vh from the top) with generous space
+            around it; on mobile it stays near the top. */}
+        <div className="relative z-10 mx-auto w-full max-w-6xl px-6 pt-14 sm:px-10 lg:pt-[22vh]">
           <span className="label-mono">Artist</span>
-          <h1 className="mt-3 text-5xl font-light leading-[0.98] tracking-tight text-fg sm:text-6xl">
+          <h1 className="mt-3 font-light leading-[0.98] tracking-tight text-fg text-[clamp(2.5rem,7vw,4.25rem)]">
             Camille
             <br />
             Buzuno
           </h1>
         </div>
 
-        {/* Oyster navigation — the centerpiece */}
-        <div className="relative -mt-8 flex flex-1 items-center justify-center">
+        {/* Oyster — the main visual object. On desktop it fills the hero and
+            sits behind the name (both have room); on mobile it stacks below so
+            the two never overlap. */}
+        <div className="relative z-0 flex flex-1 items-center justify-center lg:absolute lg:inset-0">
           <OysterNav />
         </div>
       </main>

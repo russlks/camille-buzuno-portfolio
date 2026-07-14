@@ -65,10 +65,13 @@ export default function OysterNav() {
             <stop offset="35%" style={{ stopColor: "rgba(var(--coral-rgb), 0.62)" }} />
             <stop offset="100%" style={{ stopColor: "rgba(var(--coral-rgb), 0)" }} />
           </radialGradient>
-          <radialGradient id="tealDepth" cx="50%" cy="42%" r="64%">
-            <stop offset="0%" style={{ stopColor: "rgba(var(--oyster-rgb), 0.28)" }} />
-            <stop offset="34%" style={{ stopColor: "rgba(var(--oyster-rgb), 0.26)" }} />
-            <stop offset="100%" style={{ stopColor: "rgba(var(--oyster-rgb), 0)" }} />
+          {/* Atmospheric light — very pale cyan-blue, no defined edge; it
+              dissolves softly into the background rather than reading as a
+              glow. Shared by the overlapping soft ellipses below. */}
+          <radialGradient id="atmoGlow" cx="50%" cy="46%" r="74%">
+            <stop offset="0%" style={{ stopColor: "rgba(var(--atmo), 0.55)" }} />
+            <stop offset="55%" style={{ stopColor: "rgba(var(--atmo), 0.2)" }} />
+            <stop offset="100%" style={{ stopColor: "rgba(var(--atmo), 0)" }} />
           </radialGradient>
           <filter id="lift" x="-40%" y="-40%" width="180%" height="180%">
             <feDropShadow
@@ -79,8 +82,9 @@ export default function OysterNav() {
               floodOpacity="0.55"
             />
           </filter>
-          <filter id="soft" x="-70%" y="-70%" width="240%" height="240%">
-            <feGaussianBlur stdDeviation="34" />
+          {/* Very large, very soft blur so the atmosphere has no visible edge. */}
+          <filter id="soft" x="-140%" y="-140%" width="380%" height="380%">
+            <feGaussianBlur stdDeviation="62" />
           </filter>
           <filter id="coreblur" x="-80%" y="-80%" width="260%" height="260%">
             <feGaussianBlur stdDeviation="20" />
@@ -99,6 +103,28 @@ export default function OysterNav() {
           </clipPath>
         </defs>
 
+        {/* Atmospheric light — two large, overlapping, barely-there ellipses,
+            kept static (outside the breathing group) so it reads as ambient
+            moisture/light supporting the oyster, not a graphic element. */}
+        <ellipse
+          className="oyster-anatomy oyster-atmo-a"
+          cx={OYSTER_CENTER.x}
+          cy={OYSTER_CENTER.y + 12}
+          rx="300"
+          ry="326"
+          fill="url(#atmoGlow)"
+          filter="url(#soft)"
+        />
+        <ellipse
+          className="oyster-anatomy oyster-atmo-b"
+          cx={OYSTER_CENTER.x - 34}
+          cy={OYSTER_CENTER.y - 58}
+          rx="210"
+          ry="220"
+          fill="url(#atmoGlow)"
+          filter="url(#soft)"
+        />
+
         <g
           style={{
             transform: `translate(${par.x}px, ${par.y}px)`,
@@ -106,18 +132,6 @@ export default function OysterNav() {
           }}
         >
           <g className="oyster-breathe">
-            {/* Broad teal depth glow around the whole shell */}
-            <ellipse
-              className="oyster-anatomy"
-              cx={OYSTER_CENTER.x}
-              cy={OYSTER_CENTER.y + 6}
-              rx="220"
-              ry="240"
-              fill="url(#tealDepth)"
-              filter="url(#soft)"
-              opacity="0.9"
-            />
-
             {/* Soft diffused coral core — the living centre inside ring 01 */}
             <ellipse
               className="oyster-anatomy oyster-core"

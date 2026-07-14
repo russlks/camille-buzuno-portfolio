@@ -22,6 +22,8 @@
   --accent-soft: rgba(13, 143, 136, 0.14);
   --oyster-rgb: 20, 165, 175; /* richer cyan-teal, oyster only */
   --coral-rgb: 255, 77, 77; /* vivid coral-red core (#FF4D4D) */
+  --atmo: 150, 196, 222; /* atmospheric light around the oyster — pale cyan-blue (light theme) */
+  --atmo-op: 1;
   /* Shell depth (Layers 9 & 7): light theme → black outline + soft black inner shadow */
   --shell-line: rgba(0, 0, 0, 0.92);
   --shell-shade-rgb: 0, 0, 0;
@@ -51,6 +53,8 @@
   --accent-soft: rgba(53, 202, 191, 0.15);
   --oyster-rgb: 64, 220, 210; /* richer cyan-teal, oyster only */
   --coral-rgb: 255, 77, 77; /* vivid coral-red core (#FF4D4D) */
+  --atmo: 244, 247, 250; /* atmospheric light around the oyster — soft milky white (dark theme) */
+  --atmo-op: 0.6; /* white reads stronger on black — keep it barely-there */
   /* Shell depth (Layers 9 & 7): depth theme → white outline + soft white inner glow */
   --shell-line: rgba(255, 255, 255, 0.9);
   --shell-shade-rgb: 255, 255, 255;
@@ -195,6 +199,14 @@ body {
 /* Non-interactive anatomy (contour, glow, core). */
 .oyster-anatomy {
   pointer-events: none;
+}
+
+/* Atmospheric-light ellipses — base opacity dimmed per theme via --atmo-op. */
+.oyster-atmo-a {
+  opacity: calc(0.34 * var(--atmo-op, 1));
+}
+.oyster-atmo-b {
+  opacity: calc(0.2 * var(--atmo-op, 1));
 }
 
 /* Luxury motion — slow breathing + tiny float. */
