@@ -55,8 +55,11 @@
   --coral-rgb: 255, 77, 77; /* vivid coral-red core (#FF4D4D) */
   --atmo: 244, 247, 250; /* atmospheric light around the oyster — soft milky white (dark theme) */
   --atmo-op: 0.6; /* white reads stronger on black — keep it barely-there */
-  /* Shell depth (Layers 9 & 7): depth theme → white outline + soft white inner glow */
-  --shell-line: rgba(255, 255, 255, 0.9);
+  /* Soft, slightly translucent museum white for the contour strokes (dark). */
+  --shell-contour: rgba(233, 240, 239, 0.7);
+  /* Shell depth (Layers 9 & 7 = rings 07 & 09): depth theme → teal accent
+     outline + soft white inner glow (glow unchanged). */
+  --shell-line: rgba(var(--oyster-rgb), 0.85);
   --shell-shade-rgb: 255, 255, 255;
   --shell-shade-a: 0.34;
   --glass: rgba(10, 17, 18, 0.5);
@@ -145,6 +148,19 @@ body {
 .oyster-link:focus-visible .oyster-band--core {
   fill: rgba(var(--coral-rgb), 0.42);
   stroke: rgba(var(--coral-rgb), 0.95);
+}
+
+/* Dark mode only — sculptural stroke palette. Every contour becomes a soft,
+   translucent museum white; rings 07 & 09 stay teal as the only accents.
+   Strokes only: fills (incl. the coral core), glow, hover, line thickness,
+   shape and animation are all left exactly as they were. */
+.dark .oyster-band {
+  stroke: var(--shell-contour);
+}
+/* Rings 07 & 09 keep the original teal band stroke (declared after the
+   white rule so it wins at equal specificity). */
+.dark .oyster-band--accent {
+  stroke: rgba(var(--oyster-rgb), 0.42);
 }
 
 /* Recede every other band while one is active. */

@@ -161,7 +161,13 @@ export default function OysterNav() {
                   onFocus={() => setActive(item)}
                 >
                   <path
-                    className={i === 0 ? "oyster-band oyster-band--core" : "oyster-band"}
+                    className={
+                      i === 0
+                        ? "oyster-band oyster-band--core"
+                        : i === 6 || i === 8
+                          ? "oyster-band oyster-band--accent" // rings 07 & 09
+                          : "oyster-band"
+                    }
                     d={bandPath(i)}
                     fillRule={i === 0 ? undefined : "evenodd"}
                     strokeLinejoin="round"
