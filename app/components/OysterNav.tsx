@@ -53,7 +53,7 @@ export default function OysterNav() {
       <svg
         ref={svgRef}
         viewBox={OYSTER_VIEWBOX}
-        className="oyster h-[min(78vh,680px)] w-auto max-w-[92vw] overflow-visible"
+        className="oyster h-[min(68vh,580px)] w-auto max-w-[86vw] overflow-visible lg:h-[min(78vh,680px)] lg:max-w-[92vw]"
         role="group"
         aria-label="Oyster shell navigation"
         onMouseMove={onMove}
@@ -165,7 +165,14 @@ export default function OysterNav() {
                     d={bandPath(i)}
                     fillRule={i === 0 ? undefined : "evenodd"}
                     strokeLinejoin="round"
-                    style={{ "--band-alpha": bandAlpha(i) } as React.CSSProperties}
+                    style={
+                      {
+                        "--band-alpha": bandAlpha(i),
+                        // ring ordinal (0 = coral core) → staggers the mobile
+                        // "wake" entrance so parts light up one after another
+                        "--wake-i": i,
+                      } as React.CSSProperties
+                    }
                   />
                   {/* resting ordinal */}
                   <text
