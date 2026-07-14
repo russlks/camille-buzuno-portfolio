@@ -243,6 +243,216 @@ body {
   animation: core-pulse 8s ease-in-out infinite;
 }
 
+/* ---------------------------------------------------------------------------
+   Floating navigation — MOBILE + iPad only (rendered below `lg`).
+   Sections drift around a small abstract organic form like objects discovered
+   underwater. Thin, near-invisible labels; subtle drift, breathing, motes.
+--------------------------------------------------------------------------- */
+
+/* Neutral, light-gray ink for the labels — theme-aware but always faint. */
+:root {
+  --orbit-ink: 96, 110, 112;
+}
+.dark {
+  --orbit-ink: 196, 210, 209;
+}
+
+/* Mobile + iPad only: the floating labels drift near the edges, so stop any
+   stray sub-pixel from creating horizontal scroll that would shift the
+   centred composition. Desktop (>= lg) is untouched. */
+@media (max-width: 1023px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+}
+
+.orbit {
+  position: relative;
+  width: min(80vw, 344px);
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  overflow: visible;
+  isolation: isolate;
+}
+
+/* Shared square field for trajectories, halo and the organic form. */
+.orbit-field {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Guide trajectories — extremely subtle dotted paths. */
+.orbit-path {
+  fill: none;
+  stroke: rgba(var(--orbit-ink), 0.55);
+  stroke-width: 0.35;
+  stroke-linecap: round;
+  stroke-dasharray: 0.3 3.2;
+  opacity: 0.32;
+  transition: opacity 0.9s ease, stroke 0.9s ease, stroke-width 0.9s ease;
+}
+/* Chosen destination — the path softly lights and travels outward. */
+.orbit-path.is-lit {
+  stroke: rgba(var(--oyster-rgb), 0.85);
+  stroke-width: 0.55;
+  opacity: 0.95;
+  animation: orbit-travel 1.6s linear infinite;
+}
+@keyframes orbit-travel {
+  to {
+    stroke-dashoffset: -7;
+  }
+}
+
+.orbit-halo {
+  opacity: 0.7;
+  filter: url(#orbitSoft);
+}
+
+/* The abstract organic form — soft, glassy, alive. */
+.orbit-body {
+  stroke: rgba(var(--oyster-rgb), 0.42);
+  stroke-width: 0.5;
+}
+.orbit-body-inner {
+  fill: rgba(var(--coral-rgb), 0.06);
+  stroke: rgba(var(--oyster-rgb), 0.28);
+  stroke-width: 0.4;
+}
+
+.orbit-breathe {
+  transform-box: view-box;
+  transform-origin: 50px 50px;
+  animation: orbit-breathe 12s ease-in-out infinite;
+}
+@keyframes orbit-breathe {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.94;
+  }
+  50% {
+    transform: translateY(-1.4px) scale(1.045);
+    opacity: 1;
+  }
+}
+
+/* Drifting motes. */
+.orbit-motes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.orbit-mote {
+  position: absolute;
+  border-radius: 9999px;
+  background: rgba(var(--oyster-rgb), 0.5);
+  transform: translate(-50%, -50%);
+  animation: orbit-mote var(--t, 10s) ease-in-out var(--d, 0s) infinite;
+}
+@keyframes orbit-mote {
+  0%,
+  100% {
+    transform: translate(-50%, -50%);
+    opacity: 0.15;
+  }
+  50% {
+    transform: translate(calc(-50% + 6px), calc(-50% - 10px));
+    opacity: 0.6;
+  }
+}
+
+/* Label anchor: fixes the floating point; centring lives here so the drift
+   and hover-scale transforms below stay independent. */
+.orbit-anchor {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+.orbit-drift {
+  display: block;
+  animation: orbit-drift var(--t, 12s) ease-in-out var(--d, 0s) infinite;
+}
+@keyframes orbit-drift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  33% {
+    transform: translate(2px, -3px);
+  }
+  66% {
+    transform: translate(-2px, 2px);
+  }
+}
+
+/* The label itself — thin, semi-transparent, almost dissolving into water. */
+.orbit-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4em;
+  padding: 0.5rem 0.55rem;
+  white-space: nowrap;
+  color: rgba(var(--orbit-ink), 0.5);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transform: scale(1);
+  transform-origin: center;
+  transition: transform 0.8s cubic-bezier(0.16, 0.72, 0.24, 1),
+    color 0.8s ease, opacity 0.8s ease;
+}
+.orbit-idx {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.14em;
+  color: rgba(var(--oyster-rgb), 0.5);
+}
+.orbit-name {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 200;
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+}
+
+/* iPad / larger tablets: give the composition more presence on the wider
+   canvas while keeping the same airy proportions. Still below `lg`, so the
+   desktop oyster is never affected. */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .orbit {
+    width: min(70vw, 560px);
+  }
+  .orbit-name {
+    font-size: 1rem;
+  }
+  .orbit-idx {
+    font-size: 0.62rem;
+  }
+}
+
+/* Chosen (tap / hover / focus): gently enlarge and surface from the water. */
+.orbit-label.is-active,
+.orbit-label:hover,
+.orbit-label:focus-visible {
+  color: rgba(var(--orbit-ink), 0.95);
+  transform: scale(1.14);
+  outline: none;
+}
+.orbit-label.is-active .orbit-idx,
+.orbit-label:hover .orbit-idx,
+.orbit-label:focus-visible .orbit-idx {
+  color: rgba(var(--oyster-rgb), 0.95);
+}
+
+/* When one label is chosen, the rest recede further into the background. */
+.orbit:has(.orbit-label.is-active) .orbit-label:not(.is-active),
+.orbit:has(.orbit-label:hover) .orbit-label:not(:hover) {
+  opacity: 0.4;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     transition-duration: 0.01ms !important;

@@ -1,5 +1,6 @@
 import SiteHeader from "./components/SiteHeader";
 import OysterNav from "./components/OysterNav";
+import FloatingNav from "./components/FloatingNav";
 import EditorialGrid from "./components/EditorialGrid";
 import ParallaxPortrait from "./components/ParallaxPortrait";
 
@@ -23,11 +24,17 @@ export default function Home() {
           </h1>
         </div>
 
-        {/* Oyster — the main visual object. On desktop it fills the hero and
-            sits behind the name (both have room); on mobile it stacks below so
-            the two never overlap. */}
-        <div className="relative z-0 flex flex-1 items-center justify-center lg:absolute lg:inset-0">
+        {/* Oyster — desktop only. Fills the hero and sits behind the name
+            (both have room). Untouched from the original design. */}
+        <div className="hidden lg:absolute lg:inset-0 lg:z-0 lg:flex lg:items-center lg:justify-center">
           <OysterNav />
+        </div>
+
+        {/* Floating navigation — mobile + iPad. Sections orbit a small
+            organic form in open water; stacks below the name so they never
+            overlap. Replaces the oyster below the `lg` breakpoint. */}
+        <div className="relative z-0 flex w-full flex-1 items-center justify-center overflow-x-clip pt-6 pb-10 lg:hidden">
+          <FloatingNav />
         </div>
       </main>
 
