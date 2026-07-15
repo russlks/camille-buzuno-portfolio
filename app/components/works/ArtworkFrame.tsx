@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { Artwork } from "../../lib/works";
 import { playWood } from "../../lib/sound";
+import ArtworkCanvas from "./ArtworkCanvas";
 
 /* One framed artwork on the gallery wall. Its on-screen width is derived from
    the real centimetre dimensions (via the --w/--h custom props and the
@@ -27,29 +28,27 @@ export default function ArtworkFrame({
       style={
         { "--w": work.widthCm, "--h": work.heightCm } as React.CSSProperties
       }
-      aria-label={`${work.title}, ${work.year} — ${work.medium}, ${work.widthCm} × ${work.heightCm} cm`}
+      aria-label={`${work.displayTitle}, ${work.year} — ${work.displayedMedium}, ${work.widthCm} × ${work.heightCm} cm`}
       onMouseEnter={() => playWood(index)}
       onPointerDown={() => playWood(index)}
     >
       <span className={`aw-frame aw-frame--${work.frameStyle}`}>
         <span className="aw-mat">
-          <span className="aw-canvas" data-series={work.series}>
-            {work.image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={work.image}
-                alt={work.title}
-                loading={eager ? "eager" : "lazy"}
-              />
-            ) : null}
-          </span>
+          <ArtworkCanvas
+            image={work.image}
+            alt={work.displayTitle}
+            series={work.series}
+            title={work.displayTitle}
+            eager={eager}
+          />
         </span>
       </span>
 
       <span className="aw-label">
-        <span className="aw-label-title">{work.title}</span>
+        <span className="aw-label-title">{work.displayTitle}</span>
         <span className="aw-label-meta">
-          {work.year} · {work.medium} · {work.widthCm} × {work.heightCm} cm
+          {work.year} · {work.displayedMedium} · {work.widthCm} ×{" "}
+          {work.heightCm} cm
         </span>
       </span>
     </Link>

@@ -599,7 +599,8 @@ body {
   box-shadow: 0 22px 44px -22px rgba(0, 0, 0, 0.55);
 }
 /* Matte natural woods — flat, restrained tones (low-contrast grain). */
-.aw-frame--oak {
+.aw-frame--oak,
+.aw-frame--thin-oak {
   --wood: linear-gradient(155deg, #c9b899, #c1ad8c);
 }
 .aw-frame--ash {
@@ -608,7 +609,8 @@ body {
 .aw-frame--walnut {
   --wood: linear-gradient(155deg, #8f7357, #7d6348);
 }
-.dark .aw-frame--oak {
+.dark .aw-frame--oak,
+.dark .aw-frame--thin-oak {
   --wood: linear-gradient(155deg, #5b4e3a, #514530);
 }
 .dark .aw-frame--ash {
@@ -624,6 +626,7 @@ body {
   background: transparent;
 }
 .aw-canvas {
+  position: relative;
   display: block;
   aspect-ratio: var(--w) / var(--h);
   overflow: hidden;
@@ -653,11 +656,42 @@ body {
 .aw-canvas[data-series="Individual Works"] {
   --tint: 118, 138, 150;
 }
+/* Real artwork image — clean, uncropped, no filter/overlay/opacity change.
+   Its aspect ratio matches the canvas, so contain fills it edge-to-edge and
+   covers the placeholder beneath. */
 .aw-canvas img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: contain;
   display: block;
+}
+/* Neutral placeholder shown until the real image is present. */
+.aw-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 12%;
+  text-align: center;
+}
+.aw-placeholder-label {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--faint);
+  opacity: 0.75;
+}
+.aw-placeholder-title {
+  font-weight: 300;
+  font-size: clamp(0.72rem, 1.1vw, 1rem);
+  line-height: 1.25;
+  color: var(--muted);
 }
 /* Gallery label — a quiet museum caption revealed on hover. */
 .aw-label {

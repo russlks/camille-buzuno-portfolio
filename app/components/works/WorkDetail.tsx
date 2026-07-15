@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Artwork } from "../../lib/works";
+import ArtworkCanvas from "./ArtworkCanvas";
 
 function Meta({ label, value }: { label: string; value: string }) {
   return (
@@ -39,23 +40,24 @@ export default function WorkDetail({
             }
           >
             <span className="aw-mat">
-              <span className="aw-canvas" data-series={work.series}>
-                {work.image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={work.image} alt={work.title} />
-                ) : null}
-              </span>
+              <ArtworkCanvas
+                image={work.image}
+                alt={work.displayTitle}
+                series={work.series}
+                title={work.displayTitle}
+                eager
+              />
             </span>
           </div>
         </div>
 
         <aside className="wd-info">
           <span className="label-mono">{work.series}</span>
-          <h1 className="wd-title">{work.title}</h1>
+          <h1 className="wd-title">{work.displayTitle}</h1>
 
           <dl className="wd-meta">
             <Meta label="Year" value={String(work.year)} />
-            <Meta label="Medium" value={work.medium} />
+            <Meta label="Medium" value={work.displayedMedium} />
             <Meta
               label="Dimensions"
               value={`${work.widthCm} × ${work.heightCm} cm`}

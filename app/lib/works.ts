@@ -1,67 +1,18 @@
 /* ---------------------------------------------------------------------------
-   Selected Works — data model + filtering for the archive.
+   Selected Works — filtering + curation over the real artwork database.
 
-   Placeholder data only: no final titles, no real artwork assets. Real images
-   drop in later via `image`; until then each work renders an elegant neutral
-   canvas. Display scale in the gallery is derived from the real centimetre
-   dimensions (see Gallery / ArtworkFrame), so a physically larger work reads
-   as visibly larger.
+   The data lives in /data/artworks.ts (add one object to extend the archive).
+   Everything here derives from that data: the Status / Series / Medium / Size
+   facets, and the Year range. Medium filtering uses each work's
+   `mediumFilters` array (never the displayed string), so one work can appear
+   under several mediums.
 --------------------------------------------------------------------------- */
+import { ARTWORKS, type Artwork } from "@/data/artworks";
 
-export type Status = "Available" | "Private Collection" | "On Exhibition";
-export type Series =
-  | "Mermaids in Our Time"
-  | "Sketches"
-  | "Early Works"
-  | "Individual Works";
-export type Medium = "Oil" | "Acrylic" | "Mixed Media" | "Drawing" | "Digital";
+export type { Artwork };
+export const WORKS = ARTWORKS;
+
 export type SizeCategory = "Small" | "Medium" | "Large" | "Monumental";
-// Extendable — each maps to a frame profile/texture in the ArtworkFrame CSS.
-export type FrameStyle = "oak" | "walnut" | "ash";
-
-export type Artwork = {
-  id: string;
-  slug: string;
-  title: string;
-  year: number;
-  image: string | null; // null → neutral placeholder canvas
-  widthCm: number;
-  heightCm: number;
-  medium: Medium;
-  series: Series;
-  status: Status;
-  frameStyle: FrameStyle;
-  description?: string;
-};
-
-export const STATUSES: Status[] = [
-  "Available",
-  "Private Collection",
-  "On Exhibition",
-];
-export const SERIES: Series[] = [
-  "Mermaids in Our Time",
-  "Sketches",
-  "Early Works",
-  "Individual Works",
-];
-export const MEDIUMS: Medium[] = [
-  "Oil",
-  "Acrylic",
-  "Mixed Media",
-  "Drawing",
-  "Digital",
-];
-export const SIZES: { key: SizeCategory; label: string; hint: string }[] = [
-  { key: "Small", label: "Small", hint: "longest side under 60 cm" },
-  { key: "Medium", label: "Medium", hint: "60–100 cm" },
-  { key: "Large", label: "Large", hint: "101–150 cm" },
-  { key: "Monumental", label: "Monumental", hint: "over 150 cm" },
-];
-
-export const YEAR_START = 2020;
-// Dynamic end year — updates automatically as the calendar (and rebuilds) move.
-export const YEAR_END = new Date().getFullYear();
 
 export function sizeCategory(w: Pick<Artwork, "widthCm" | "heightCm">): SizeCategory {
   const longest = Math.max(w.widthCm, w.heightCm);
@@ -71,26 +22,41 @@ export function sizeCategory(w: Pick<Artwork, "widthCm" | "heightCm">): SizeCate
   return "Monumental";
 }
 
-// Placeholder archive — varied dimensions so the real-size scaling is visible.
-export const WORKS: Artwork[] = [
-  { id: "01", slug: "untitled-01", title: "Untitled I", year: 2024, image: null, widthCm: 170, heightCm: 160, medium: "Oil", series: "Mermaids in Our Time", status: "On Exhibition", frameStyle: "oak", description: "Placeholder description — archival notes to follow." },
-  { id: "02", slug: "untitled-02", title: "Untitled II", year: 2021, image: null, widthCm: 40, heightCm: 30, medium: "Drawing", series: "Sketches", status: "Available", frameStyle: "oak" },
-  { id: "03", slug: "untitled-03", title: "Untitled III", year: 2023, image: null, widthCm: 90, heightCm: 70, medium: "Acrylic", series: "Individual Works", status: "Available", frameStyle: "oak" },
-  { id: "04", slug: "untitled-04", title: "Untitled IV", year: 2022, image: null, widthCm: 120, heightCm: 100, medium: "Oil", series: "Mermaids in Our Time", status: "Private Collection", frameStyle: "oak", description: "Placeholder description — archival notes to follow." },
-  { id: "05", slug: "untitled-05", title: "Untitled V", year: 2020, image: null, widthCm: 55, heightCm: 45, medium: "Mixed Media", series: "Sketches", status: "Available", frameStyle: "oak" },
-  { id: "06", slug: "untitled-06", title: "Untitled VI", year: 2025, image: null, widthCm: 150, heightCm: 120, medium: "Oil", series: "Individual Works", status: "On Exhibition", frameStyle: "oak" },
-  { id: "07", slug: "untitled-07", title: "Untitled VII", year: 2020, image: null, widthCm: 60, heightCm: 80, medium: "Acrylic", series: "Early Works", status: "Private Collection", frameStyle: "oak" },
-  { id: "08", slug: "untitled-08", title: "Untitled VIII", year: 2026, image: null, widthCm: 200, heightCm: 150, medium: "Oil", series: "Mermaids in Our Time", status: "Available", frameStyle: "oak", description: "Placeholder description — archival notes to follow." },
-  { id: "09", slug: "untitled-09", title: "Untitled IX", year: 2026, image: null, widthCm: 30, heightCm: 40, medium: "Digital", series: "Individual Works", status: "Available", frameStyle: "oak" },
-  { id: "10", slug: "untitled-10", title: "Untitled X", year: 2023, image: null, widthCm: 100, heightCm: 100, medium: "Mixed Media", series: "Mermaids in Our Time", status: "On Exhibition", frameStyle: "oak" },
-  { id: "11", slug: "untitled-11", title: "Untitled XI", year: 2021, image: null, widthCm: 45, heightCm: 60, medium: "Drawing", series: "Early Works", status: "Available", frameStyle: "oak" },
-  { id: "12", slug: "untitled-12", title: "Untitled XII", year: 2024, image: null, widthCm: 130, heightCm: 90, medium: "Oil", series: "Individual Works", status: "Private Collection", frameStyle: "oak" },
+const ALL_SIZES: { key: SizeCategory; label: string; hint: string }[] = [
+  { key: "Small", label: "Small", hint: "longest side under 60 cm" },
+  { key: "Medium", label: "Medium", hint: "60–100 cm" },
+  { key: "Large", label: "Large", hint: "101–150 cm" },
+  { key: "Monumental", label: "Monumental", hint: "over 150 cm" },
 ];
 
+const uniqueInOrder = (values: string[]): string[] => {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const v of values)
+    if (!seen.has(v)) {
+      seen.add(v);
+      out.push(v);
+    }
+  return out;
+};
+
+// Facets, derived from the data.
+export const STATUSES = uniqueInOrder(WORKS.map((w) => w.status));
+export const SERIES = uniqueInOrder(WORKS.map((w) => w.series));
+export const MEDIUMS = uniqueInOrder(WORKS.flatMap((w) => w.mediumFilters));
+export const SIZES = ALL_SIZES.filter((s) =>
+  WORKS.some((w) => sizeCategory(w) === s.key)
+);
+
+// Year range, derived: opens no later than 2020, closes no earlier than now.
+const YEARS = WORKS.map((w) => w.year);
+export const YEAR_START = Math.min(2020, ...YEARS);
+export const YEAR_END = Math.max(new Date().getFullYear(), ...YEARS);
+
 export type Filters = {
-  statuses: Status[];
-  series: Series[];
-  mediums: Medium[];
+  statuses: string[];
+  series: string[];
+  mediums: string[];
   sizes: SizeCategory[];
   yearMin: number;
   yearMax: number;
@@ -112,27 +78,35 @@ export function filterWorks(works: Artwork[], f: Filters): Artwork[] {
       w.year >= f.yearMin &&
       w.year <= f.yearMax &&
       (f.series.length === 0 || f.series.includes(w.series)) &&
-      (f.mediums.length === 0 || f.mediums.includes(w.medium)) &&
+      // a work matches if ANY of its medium tags is selected
+      (f.mediums.length === 0 ||
+        w.mediumFilters.some((m) => f.mediums.includes(m))) &&
       (f.sizes.length === 0 || f.sizes.includes(sizeCategory(w)))
   );
 }
 
+export const getWork = (slug: string) => WORKS.find((w) => w.slug === slug);
+
+export function workNeighbors(slug: string): {
+  prev: Artwork | null;
+  next: Artwork | null;
+} {
+  const i = WORKS.findIndex((w) => w.slug === slug);
+  if (i === -1) return { prev: null, next: null };
+  return {
+    prev: i > 0 ? WORKS[i - 1] : null,
+    next: i < WORKS.length - 1 ? WORKS[i + 1] : null,
+  };
+}
+
 /* ---------------------------------------------------------------------------
    Curation — arrange the (filtered) works into intentional exhibition rows
-   rather than an auto-packed grid:
-     • never more than three works in a row;
-     • a monumental work hangs alone (its "section" stays ≤ 2);
-     • a large work is never crowded — at most one small work beside it;
-     • small / medium works gather in calm groups of two or three;
-     • rows alternate size and horizontal placement for a natural rhythm,
-       with big works given extra breathing room.
+   rather than an auto-packed grid: never more than three per row; a monumental
+   work hangs alone; a large work takes at most one small counterpoint; small /
+   medium works gather in calm groups; rows alternate placement for rhythm.
 --------------------------------------------------------------------------- */
 export type RowAlign = "center" | "left" | "right" | "spread";
-export type GalleryRow = {
-  items: Artwork[];
-  align: RowAlign;
-  breathe: boolean; // extra surrounding space for large / monumental rows
-};
+export type GalleryRow = { items: Artwork[]; align: RowAlign; breathe: boolean };
 
 export function curateRows(works: Artwork[]): GalleryRow[] {
   const grouped: Artwork[][] = [];
@@ -140,12 +114,11 @@ export function curateRows(works: Artwork[]): GalleryRow[] {
   while (i < works.length) {
     const cat = sizeCategory(works[i]);
     if (cat === "Monumental") {
-      grouped.push([works[i]]); // hangs alone
+      grouped.push([works[i]]);
       i += 1;
     } else if (cat === "Large") {
       const row = [works[i]];
       i += 1;
-      // a large work may be paired with a single small counterpoint, no more
       if (i < works.length && sizeCategory(works[i]) === "Small") {
         row.push(works[i]);
         i += 1;
@@ -156,7 +129,7 @@ export function curateRows(works: Artwork[]): GalleryRow[] {
       i += 1;
       while (i < works.length && row.length < 3) {
         const nc = sizeCategory(works[i]);
-        if (nc === "Monumental" || nc === "Large") break; // don't crowd big works
+        if (nc === "Monumental" || nc === "Large") break;
         row.push(works[i]);
         i += 1;
       }
@@ -184,18 +157,4 @@ export function curateRows(works: Artwork[]): GalleryRow[] {
     }
     return { items, align, breathe };
   });
-}
-
-export const getWork = (slug: string) => WORKS.find((w) => w.slug === slug);
-
-export function workNeighbors(slug: string): {
-  prev: Artwork | null;
-  next: Artwork | null;
-} {
-  const i = WORKS.findIndex((w) => w.slug === slug);
-  if (i === -1) return { prev: null, next: null };
-  return {
-    prev: i > 0 ? WORKS[i - 1] : null,
-    next: i < WORKS.length - 1 ? WORKS[i + 1] : null,
-  };
 }
