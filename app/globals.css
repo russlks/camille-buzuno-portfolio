@@ -71,6 +71,53 @@
   --oyster-lid: rgba(53, 202, 191, 0.07);
 }
 
+/* Artist Statement — decorative Vitruvian-mermaid engraving behind the text.
+   Fixed, full-bleed and clipped so the frame extends past the section edges;
+   the figure (offset right in the source) is centred behind the reading
+   column; a very slow breathing drift. Never competes with the text. */
+.mermaid-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.mermaid-bg__pos {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  /* centre the figure (~73% across the source) on the reading column */
+  transform: translate(-73%, -50%);
+}
+.mermaid-bg__fig {
+  height: 82vh; /* mobile: reduced scale, body stays centred */
+  width: auto;
+  opacity: 0.09;
+  transform-origin: center center;
+  animation: mermaid-breathe 22s ease-in-out infinite;
+}
+@media (min-width: 768px) {
+  .mermaid-bg__fig {
+    height: 108vh; /* tablet: larger, begins to bleed */
+    opacity: 0.1;
+  }
+}
+@media (min-width: 1024px) {
+  .mermaid-bg__fig {
+    height: 122vh; /* desktop: figure tall, frame bleeds top & bottom */
+    opacity: 0.1;
+  }
+}
+@keyframes mermaid-breathe {
+  0%,
+  100% {
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    transform: scale(1.035) translateY(-0.7%);
+  }
+}
+
 /* Force the light palette on a subtree regardless of the global theme — used
    by the always-white museum pages so their header/footer read light too. */
 .theme-light {

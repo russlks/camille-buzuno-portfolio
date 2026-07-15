@@ -17,21 +17,16 @@ export default function ArtistStatementPage() {
     <div className="theme-light relative min-h-screen bg-white text-[#191c1e]">
       <SiteHeader />
 
-      {/* Vitruvian Mermaid — decorative background only. Centered behind the
-          text, barely there, never competing, and inert to pointer events.
-          Scales responsively: smaller on mobile, largest on tablet, full
-          figure on desktop. Swap /images/vitruvian-mermaid.svg for the final
-          artwork — everything else stays. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-0 flex items-center justify-center"
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/images/vitruvian-mermaid.svg"
-          alt=""
-          className="h-[58vh] w-[92vw] object-contain opacity-[0.06] md:h-[94vh] md:w-[82vw] lg:h-[82vh] lg:w-[60vw]"
-        />
+      {/* Vitruvian Mermaid — decorative background only. A teal duotone
+          engraving (adapted from the source vector) set very low, the figure
+          centered behind the text with the frame bleeding past the edges, and
+          a slow breathing drift. Inert to pointer events; disabled under
+          reduced motion. See .mermaid-bg in globals.css. */}
+      <div aria-hidden="true" className="mermaid-bg">
+        <div className="mermaid-bg__pos">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/mermaid-teal.svg" alt="" className="mermaid-bg__fig" />
+        </div>
       </div>
 
       <main className="relative z-10 mx-auto max-w-[680px] px-6 pb-40 pt-[15vh] sm:px-8">
