@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import SiteHeader from "../components/SiteHeader";
 
 export const metadata: Metadata = {
@@ -14,14 +15,14 @@ const PARAGRAPHS = [
 
 export default function ArtistStatementPage() {
   return (
-    <div className="theme-light relative min-h-screen bg-white text-[#191c1e]">
+    <div className="relative min-h-screen text-fg">
       <SiteHeader />
 
       {/* Vitruvian Mermaid — decorative background only. A teal duotone
-          engraving (adapted from the source vector) set very low, the figure
-          centered behind the text with the frame bleeding past the edges, and
-          a slow breathing drift. Inert to pointer events; disabled under
-          reduced motion. See .mermaid-bg in globals.css. */}
+          engraving set very low, the figure centered behind the text with the
+          frame bleeding past the edges, and a slow breathing drift. Inert to
+          pointer events; neutralised to soft light in dark mode (see
+          .mermaid-bg in globals.css). */}
       <div aria-hidden="true" className="mermaid-bg">
         <div className="mermaid-bg__pos">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -30,15 +31,67 @@ export default function ArtistStatementPage() {
       </div>
 
       <main className="relative z-10 mx-auto max-w-[680px] px-6 pb-40 pt-[15vh] sm:px-8">
-        <p className="text-[0.72rem] font-medium uppercase tracking-[0.3em] text-[#8b9799]">
+        <p className="text-[0.72rem] font-medium uppercase tracking-[0.3em] text-faint">
           Artist Statement
         </p>
 
-        <div className="mt-10 space-y-7 text-[1.08rem] font-light leading-[1.85] text-[#242a2c] sm:mt-12 sm:text-[1.16rem]">
+        <div className="mt-10 space-y-7 text-[1.08rem] font-light leading-[1.85] text-fg sm:mt-12 sm:text-[1.16rem]">
           {PARAGRAPHS.map((paragraph, i) => (
             <p key={i}>{paragraph}</p>
           ))}
         </div>
+
+        {/* Continue Exploring — end-of-chapter navigation. Not a footer: a
+            quiet invitation onward, with Selected Works as the primary next
+            destination and Home / Contact kept secondary. */}
+        <nav
+          aria-label="Continue exploring"
+          className="mt-32 border-t border-hair pt-14 sm:mt-44"
+        >
+          <p className="label-mono">Continue Exploring</p>
+
+          <Link
+            href="/works"
+            className="group mt-7 inline-flex items-baseline gap-3 text-fg transition-colors duration-300 hover:text-accent"
+          >
+            <span className="text-[clamp(1.7rem,4.5vw,2.5rem)] font-light leading-none tracking-tight">
+              Selected Works
+            </span>
+            <span
+              aria-hidden="true"
+              className="text-[1.35rem] transition-transform duration-300 group-hover:translate-x-1.5"
+            >
+              →
+            </span>
+          </Link>
+
+          <div className="mt-12 flex items-center justify-between">
+            <Link
+              href="/"
+              className="group label-mono inline-flex items-center gap-2 transition-colors duration-300 hover:!text-accent"
+            >
+              <span
+                aria-hidden="true"
+                className="transition-transform duration-300 group-hover:-translate-x-1"
+              >
+                ←
+              </span>
+              Home
+            </Link>
+            <Link
+              href="/contact"
+              className="group label-mono inline-flex items-center gap-2 transition-colors duration-300 hover:!text-accent"
+            >
+              Contact
+              <span
+                aria-hidden="true"
+                className="transition-transform duration-300 group-hover:translate-x-1"
+              >
+                →
+              </span>
+            </Link>
+          </div>
+        </nav>
       </main>
     </div>
   );
