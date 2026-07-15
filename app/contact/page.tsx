@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SiteHeader from "../components/SiteHeader";
+import OysterNav from "../components/OysterNav";
 
 export const metadata: Metadata = {
   title: "Contact — Camille Buzuno",
@@ -30,9 +31,10 @@ export default function ContactPage() {
         <div className="contact-body">
           <p className="label-mono contact-eyebrow">Contact</p>
 
-          <h1 className="contact-headline">
-            Let&apos;s create something meaningful together.
-          </h1>
+          {/* The oyster returns — a quiet, smaller signature echoing Home. */}
+          <div className="contact-oyster">
+            <OysterNav decorative />
+          </div>
 
           <p className="contact-lede">
             Whether you&apos;re a gallery, curator, collector, brand, or simply

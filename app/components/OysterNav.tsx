@@ -34,7 +34,14 @@ const bandAlpha = (i: number) => (0.15 - i * 0.011).toFixed(3);
 const bandPath = (i: number) =>
   i === 0 ? OYSTER_RINGS[0] : `${OYSTER_RINGS[i]} ${OYSTER_RINGS[i - 1]}`;
 
-export default function OysterNav() {
+export default function OysterNav({
+  decorative = false,
+}: {
+  // `decorative` reuses the exact shell as a quiet, non-navigating signature
+  // (no links, no sound, no hover titles) — used on the Contact page. The
+  // Home usage passes nothing, so its behaviour is unchanged.
+  decorative?: boolean;
+} = {}) {
   const router = useRouter();
   const [active, setActive] = useState(NAV[0]);
   const [par, setPar] = useState({ x: 0, y: 0 });
@@ -42,8 +49,12 @@ export default function OysterNav() {
 
   // Enable the navigation sound on the visitor's first interaction (no button).
   useEffect(() => {
-    primeSound();
-  }, []);
+    if (!decorative) primeSound();
+  }, [decorative]);
+
+  const sizeClass = decorative
+    ? "h-[clamp(150px,24vw,240px)] w-auto max-w-[72vw] overflow-visible"
+    : "h-[min(68vh,580px)] w-auto max-w-[86vw] overflow-visible lg:h-[min(78vh,680px)] lg:max-w-[92vw]";
 
   // Soft cursor parallax: nudge the shell a few units toward the pointer.
   function onMove(e: React.MouseEvent) {
@@ -59,9 +70,10 @@ export default function OysterNav() {
       <svg
         ref={svgRef}
         viewBox={OYSTER_VIEWBOX}
-        className="oyster h-[min(68vh,580px)] w-auto max-w-[86vw] overflow-visible lg:h-[min(78vh,680px)] lg:max-w-[92vw]"
-        role="group"
-        aria-label="Oyster shell navigation"
+        className={`oyster ${sizeClass}`}
+        role={decorative ? undefined : "group"}
+        aria-label={decorative ? undefined : "Oyster shell navigation"}
+        aria-hidden={decorative || undefined}
         onMouseMove={onMove}
         onMouseLeave={() => setPar({ x: 0, y: 0 })}
       >
@@ -153,6 +165,53 @@ export default function OysterNav() {
             {ORDER.map((i) => {
               const item = NAV[i];
               const a = OYSTER_LABELS[i];
+              const band = (
+                <path
+                  className={
+                    i === 0
+                      ? "oyster-band oyster-band--core"
+                      : i === 6 || i === 8
+                        ? "oyster-band oyster-band--accent" // rings 07 & 09
+                        : "oyster-band"
+                  }
+                  d={bandPath(i)}
+                  fillRule={i === 0 ? undefined : "evenodd"}
+                  strokeLinejoin="round"
+                  style={
+                    {
+                      "--band-alpha": bandAlpha(i),
+                      // ring ordinal (0 = coral core) → staggers the mobile
+                      // "wake" entrance so parts light up one after another
+                      "--wake-i": i,
+                    } as React.CSSProperties
+                  }
+                />
+              );
+              const num = (
+                <text
+                  className="oyster-num"
+                  x={a.x}
+                  y={a.y}
+                  fontSize="11"
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  pointerEvents="none"
+                >
+                  {item.n}
+                </text>
+              );
+
+              // Decorative signature: the same rings, but inert (no link, no
+              // sound, no hover titles).
+              if (decorative) {
+                return (
+                  <g key={item.href} className="oyster-deco">
+                    {band}
+                    {num}
+                  </g>
+                );
+              }
+
               return (
                 <a
                   key={item.href}
@@ -172,38 +231,8 @@ export default function OysterNav() {
                   }}
                   onFocus={() => setActive(item)}
                 >
-                  <path
-                    className={
-                      i === 0
-                        ? "oyster-band oyster-band--core"
-                        : i === 6 || i === 8
-                          ? "oyster-band oyster-band--accent" // rings 07 & 09
-                          : "oyster-band"
-                    }
-                    d={bandPath(i)}
-                    fillRule={i === 0 ? undefined : "evenodd"}
-                    strokeLinejoin="round"
-                    style={
-                      {
-                        "--band-alpha": bandAlpha(i),
-                        // ring ordinal (0 = coral core) → staggers the mobile
-                        // "wake" entrance so parts light up one after another
-                        "--wake-i": i,
-                      } as React.CSSProperties
-                    }
-                  />
-                  {/* resting ordinal */}
-                  <text
-                    className="oyster-num"
-                    x={a.x}
-                    y={a.y}
-                    fontSize="11"
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    pointerEvents="none"
-                  >
-                    {item.n}
-                  </text>
+                  {band}
+                  {num}
                   {/* revealed inside the layer on hover */}
                   <text
                     className="oyster-title-n"
@@ -277,21 +306,25 @@ export default function OysterNav() {
         </g>
       </svg>
 
-      {/* Accessible ordered list (screen readers / no-JS) */}
-      <nav aria-label="Sections" className="sr-only">
-        <ol>
-          {NAV.map((item) => (
-            <li key={item.href}>
-              <a href={item.href}>
-                {item.n} {item.label}
-              </a>
-            </li>
-          ))}
-        </ol>
-      </nav>
-      <span className="sr-only" aria-live="polite">
-        {active.n} {active.label}
-      </span>
+      {/* Accessible ordered list (screen readers / no-JS) — nav only. */}
+      {!decorative && (
+        <>
+          <nav aria-label="Sections" className="sr-only">
+            <ol>
+              {NAV.map((item) => (
+                <li key={item.href}>
+                  <a href={item.href}>
+                    {item.n} {item.label}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+          <span className="sr-only" aria-live="polite">
+            {active.n} {active.label}
+          </span>
+        </>
+      )}
     </div>
   );
 }

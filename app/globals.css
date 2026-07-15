@@ -1147,14 +1147,11 @@ body {
 .contact-eyebrow {
   color: var(--faint);
 }
-.contact-headline {
-  margin: 1.6rem auto 0;
-  max-width: 18ch;
-  font-weight: 300;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-  font-size: clamp(2.1rem, 5.4vw, 4rem);
-  color: var(--fg);
+/* The oyster signature sits where the headline was, with room to breathe. */
+.contact-oyster {
+  display: flex;
+  justify-content: center;
+  margin: clamp(2rem, 5vw, 3.75rem) auto clamp(1.75rem, 4.5vw, 3.25rem);
 }
 .contact-lede {
   margin: 1.9rem auto 0;
