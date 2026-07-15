@@ -71,6 +71,25 @@
   --oyster-lid: rgba(53, 202, 191, 0.07);
 }
 
+/* Force the light palette on a subtree regardless of the global theme — used
+   by the always-white museum pages so their header/footer read light too. */
+.theme-light {
+  color-scheme: light;
+  --bg: #ffffff;
+  --bg-panel: #f5f7f7;
+  --fg: #0c0e0f;
+  --muted: #58686a;
+  --faint: #93a2a2;
+  --line: rgba(12, 24, 24, 0.05);
+  --hair: rgba(12, 24, 24, 0.12);
+  --grid: rgba(12, 24, 24, 0.035);
+  --grid-strong: rgba(12, 24, 24, 0.09);
+  --accent: #0d8f88;
+  --accent-rgb: 13, 143, 136;
+  --accent-soft: rgba(13, 143, 136, 0.14);
+  --glass: rgba(255, 255, 255, 0.55);
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-bg-panel: var(--bg-panel);
