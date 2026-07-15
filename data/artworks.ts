@@ -12,8 +12,10 @@
        one work can appear under Oil, Acrylic and Mixed Media at once. The
        filter system uses `mediumFilters`, never the displayed string.
 
-   Images live in /public/images/paintings/ and are referenced as
-   /images/paintings/<file>.jpg. If a file isn't present yet, the gallery shows
+   Images live in /public/images/paintings/ and are referenced by their exact
+   on-disk filename (the uploads use an uppercase .JPG extension — this matters
+   on Vercel's case-sensitive filesystem). If a file isn't present yet, the
+   gallery shows
    a neutral placeholder labelled with the artwork title — the entry stays
    intact.
 --------------------------------------------------------------------------- */
@@ -50,8 +52,8 @@ export const ARTWORKS: Artwork[] = [
     mediumFilters: ["Oil"],
     series: "Early Works",
     status: "Available",
-    image: "/images/paintings/dismorphophobia.jpg",
-    thumbnail: "/images/paintings/dismorphophobia.jpg",
+    image: "/images/paintings/dismorphophobia.JPG",
+    thumbnail: "/images/paintings/dismorphophobia.JPG",
     description: "",
     featured: false,
     frameStyle: "thin-oak",
@@ -68,8 +70,8 @@ export const ARTWORKS: Artwork[] = [
     mediumFilters: ["Oil", "Acrylic", "Mixed Media"],
     series: "Early Works",
     status: "Available",
-    image: "/images/paintings/the-lost-home.jpg",
-    thumbnail: "/images/paintings/the-lost-home.jpg",
+    image: "/images/paintings/the-lost-home.JPG",
+    thumbnail: "/images/paintings/the-lost-home.JPG",
     description: "",
     featured: false,
     frameStyle: "thin-oak",
@@ -86,8 +88,8 @@ export const ARTWORKS: Artwork[] = [
     mediumFilters: ["Oil"],
     series: "Mermaids in Our Time",
     status: "Available",
-    image: "/images/paintings/mermaids-chapter-i.jpg",
-    thumbnail: "/images/paintings/mermaids-chapter-i.jpg",
+    image: "/images/paintings/mermaids-chapter-i.JPG",
+    thumbnail: "/images/paintings/mermaids-chapter-i.JPG",
     description: "",
     featured: false,
     frameStyle: "thin-oak",
@@ -104,8 +106,8 @@ export const ARTWORKS: Artwork[] = [
     mediumFilters: ["Oil"],
     series: "Mermaids in Our Time",
     status: "Available",
-    image: "/images/paintings/mermaids-chapter-ii.jpg",
-    thumbnail: "/images/paintings/mermaids-chapter-ii.jpg",
+    image: "/images/paintings/mermaids-chapter-ii.JPG",
+    thumbnail: "/images/paintings/mermaids-chapter-ii.JPG",
     description: "",
     featured: false,
     frameStyle: "thin-oak",
@@ -122,8 +124,8 @@ export const ARTWORKS: Artwork[] = [
     mediumFilters: ["Oil"],
     series: "Mermaids in Our Time",
     status: "Available",
-    image: "/images/paintings/mermaids-chapter-iii.jpg",
-    thumbnail: "/images/paintings/mermaids-chapter-iii.jpg",
+    image: "/images/paintings/mermaids-chapter-iii.JPG",
+    thumbnail: "/images/paintings/mermaids-chapter-iii.JPG",
     description: "",
     featured: false,
     frameStyle: "thin-oak",
@@ -140,8 +142,8 @@ export const ARTWORKS: Artwork[] = [
     mediumFilters: ["Oil"],
     series: "Mermaids in Our Time",
     status: "Available",
-    image: "/images/paintings/mermaids-chapter-iv.jpg",
-    thumbnail: "/images/paintings/mermaids-chapter-iv.jpg",
+    image: "/images/paintings/mermaids-chapter-iv.JPG",
+    thumbnail: "/images/paintings/mermaids-chapter-iv.JPG",
     description: "",
     featured: false,
     frameStyle: "thin-oak",
