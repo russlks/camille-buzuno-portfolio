@@ -117,6 +117,75 @@ export function filterWorks(works: Artwork[], f: Filters): Artwork[] {
   );
 }
 
+/* ---------------------------------------------------------------------------
+   Curation — arrange the (filtered) works into intentional exhibition rows
+   rather than an auto-packed grid:
+     • never more than three works in a row;
+     • a monumental work hangs alone (its "section" stays ≤ 2);
+     • a large work is never crowded — at most one small work beside it;
+     • small / medium works gather in calm groups of two or three;
+     • rows alternate size and horizontal placement for a natural rhythm,
+       with big works given extra breathing room.
+--------------------------------------------------------------------------- */
+export type RowAlign = "center" | "left" | "right" | "spread";
+export type GalleryRow = {
+  items: Artwork[];
+  align: RowAlign;
+  breathe: boolean; // extra surrounding space for large / monumental rows
+};
+
+export function curateRows(works: Artwork[]): GalleryRow[] {
+  const grouped: Artwork[][] = [];
+  let i = 0;
+  while (i < works.length) {
+    const cat = sizeCategory(works[i]);
+    if (cat === "Monumental") {
+      grouped.push([works[i]]); // hangs alone
+      i += 1;
+    } else if (cat === "Large") {
+      const row = [works[i]];
+      i += 1;
+      // a large work may be paired with a single small counterpoint, no more
+      if (i < works.length && sizeCategory(works[i]) === "Small") {
+        row.push(works[i]);
+        i += 1;
+      }
+      grouped.push(row);
+    } else {
+      const row = [works[i]];
+      i += 1;
+      while (i < works.length && row.length < 3) {
+        const nc = sizeCategory(works[i]);
+        if (nc === "Monumental" || nc === "Large") break; // don't crowd big works
+        row.push(works[i]);
+        i += 1;
+      }
+      grouped.push(row);
+    }
+  }
+
+  let soloCount = 0;
+  return grouped.map((items) => {
+    const breathe = items.some((w) => {
+      const c = sizeCategory(w);
+      return c === "Monumental" || c === "Large";
+    });
+    let align: RowAlign;
+    if (items.length === 1) {
+      align =
+        sizeCategory(items[0]) === "Monumental"
+          ? "center"
+          : soloCount % 2 === 0
+            ? "left"
+            : "right";
+      soloCount += 1;
+    } else {
+      align = "spread";
+    }
+    return { items, align, breathe };
+  });
+}
+
 export const getWork = (slug: string) => WORKS.find((w) => w.slug === slug);
 
 export function workNeighbors(slug: string): {

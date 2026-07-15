@@ -509,23 +509,57 @@ body {
   --aw-min: 104px;
   --aw-max: 86vw;
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 3.5vw, 3rem);
+  flex-direction: column;
+  align-items: stretch;
+  /* generous, intentional space between hung rows */
+  gap: clamp(3.5rem, 9vw, 8.5rem);
   margin-top: 2rem;
 }
 @media (min-width: 640px) {
   .gallery {
     --ppc: 1.5;
-    --aw-max: 58vw;
+    --aw-max: 60vw;
   }
 }
 @media (min-width: 1024px) {
   .gallery {
-    --ppc: 2.15;
-    --aw-max: 460px;
+    --ppc: 2.1;
+    --aw-max: 440px;
     margin-top: 0;
+  }
+}
+
+/* Each curated row: a calm band, centred within a gallery-wall width, with
+   large gaps. On desktop the placement varies (left / right / centred /
+   spread) for rhythm; below lg it settles to a centred, wrapping flow. */
+.gallery-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(2rem, 5vw, 5.5rem);
+  width: 100%;
+  max-width: 74rem;
+  margin-inline: auto;
+}
+.gallery-row.is-breathe {
+  margin-block: clamp(0.5rem, 3vw, 3rem);
+}
+@media (min-width: 1024px) {
+  .gallery-row {
+    flex-wrap: nowrap;
+  }
+  .gallery-row.is-center {
+    justify-content: center;
+  }
+  .gallery-row.is-left {
+    justify-content: flex-start;
+  }
+  .gallery-row.is-right {
+    justify-content: flex-end;
+  }
+  .gallery-row.is-spread {
+    justify-content: space-between;
   }
 }
 .works-empty {
