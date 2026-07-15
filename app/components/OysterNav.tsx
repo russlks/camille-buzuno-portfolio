@@ -1,8 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NAV } from "../lib/nav";
+import { playOysterNote, primeSound } from "../lib/oysterSound";
 import {
   OYSTER_VIEWBOX,
   OYSTER_CENTER,
@@ -38,6 +39,11 @@ export default function OysterNav() {
   const [active, setActive] = useState(NAV[0]);
   const [par, setPar] = useState({ x: 0, y: 0 });
   const svgRef = useRef<SVGSVGElement>(null);
+
+  // Enable the navigation sound on the visitor's first interaction (no button).
+  useEffect(() => {
+    primeSound();
+  }, []);
 
   // Soft cursor parallax: nudge the shell a few units toward the pointer.
   function onMove(e: React.MouseEvent) {
@@ -155,9 +161,15 @@ export default function OysterNav() {
                   className="oyster-link"
                   onClick={(e) => {
                     e.preventDefault();
+                    // Play the ring's note during the tap; scheduling is
+                    // instant and never delays navigation.
+                    playOysterNote(i);
                     router.push(item.href);
                   }}
-                  onMouseEnter={() => setActive(item)}
+                  onMouseEnter={() => {
+                    setActive(item);
+                    playOysterNote(i); // desktop: note on cursor enter
+                  }}
                   onFocus={() => setActive(item)}
                 >
                   <path
