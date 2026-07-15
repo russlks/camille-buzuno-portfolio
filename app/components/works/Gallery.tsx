@@ -16,6 +16,7 @@ export default function Gallery({ works }: { works: Artwork[] }) {
 
   const rows = curateRows(works);
   const eagerIds = new Set(works.slice(0, 3).map((w) => w.id));
+  const order = new Map(works.map((w, i) => [w.id, i]));
 
   return (
     <div className="gallery">
@@ -25,7 +26,12 @@ export default function Gallery({ works }: { works: Artwork[] }) {
           className={`gallery-row is-${row.align}${row.breathe ? " is-breathe" : ""}`}
         >
           {row.items.map((w) => (
-            <ArtworkFrame key={w.id} work={w} eager={eagerIds.has(w.id)} />
+            <ArtworkFrame
+              key={w.id}
+              work={w}
+              index={order.get(w.id) ?? 0}
+              eager={eagerIds.has(w.id)}
+            />
           ))}
         </div>
       ))}

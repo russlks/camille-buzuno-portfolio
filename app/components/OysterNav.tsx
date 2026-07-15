@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { NAV } from "../lib/nav";
-import { playOysterNote, primeSound } from "../lib/oysterSound";
+import { playShell, primeSound } from "../lib/sound";
 import {
   OYSTER_VIEWBOX,
   OYSTER_CENTER,
@@ -163,12 +163,12 @@ export default function OysterNav() {
                     e.preventDefault();
                     // Play the ring's note during the tap; scheduling is
                     // instant and never delays navigation.
-                    playOysterNote(i);
+                    playShell(i);
                     router.push(item.href);
                   }}
                   onMouseEnter={() => {
                     setActive(item);
-                    playOysterNote(i); // desktop: note on cursor enter
+                    playShell(i); // desktop: note on cursor enter
                   }}
                   onFocus={() => setActive(item)}
                 >

@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   WORKS,
   emptyFilters,
   filterWorks,
   type Filters,
 } from "../../lib/works";
+import { primeSound } from "../../lib/sound";
 import FilterPanel from "./FilterPanel";
 import Gallery from "./Gallery";
 
@@ -15,6 +16,11 @@ type ArrayFacet = "statuses" | "series" | "mediums" | "sizes";
 export default function WorksArchive() {
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // Arm the shared sound so the gallery's wood voice unlocks on first gesture.
+  useEffect(() => {
+    primeSound();
+  }, []);
 
   const filtered = useMemo(() => filterWorks(WORKS, filters), [filters]);
 
