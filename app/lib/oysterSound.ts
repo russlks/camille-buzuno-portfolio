@@ -24,10 +24,13 @@ const NOTES = [
 ];
 
 // --- tuning --------------------------------------------------------------
-const MASTER_GAIN = 0.16; // overall level — quiet and delicate
-const REVERB_WET = 0.28; // underwater shimmer amount
-const ATTACK = 0.02; // 20 ms fade-in (no clicks)
-const DURATION = 0.6; // ~0.6 s note with exponential fade-out
+const MASTER_GAIN = 0.5; // clearly audible, still soft/premium
+const PEAK = 0.85; // per-note envelope peak
+const SUSTAIN = 0.42; // short sustain plateau so the note sings (not a ping)
+const DECAY_AT = 0.16; // seconds to reach the sustain level
+const REVERB_WET = 0.1; // light shimmer — no longer masking the note
+const ATTACK = 0.012; // ~12 ms fade-in — a touch more present
+const DURATION = 0.9; // longer, singing tail
 const COOLDOWN_MS = 220; // per-ring re-trigger guard while hovering
 const MIN_GAP_MS = 45; // global spacing so notes don't stack loudly
 
@@ -73,11 +76,12 @@ function ensureContext(): AudioContext | null {
   master = ctx.createGain();
   master.gain.value = MASTER_GAIN;
 
-  // Gentle compression so overlapping notes never pile up loudly.
+  // Gentle safety compression — high threshold so it only tames loud STACKS,
+  // leaving single notes at full, audible level.
   const comp = ctx.createDynamicsCompressor();
-  comp.threshold.value = -18;
-  comp.knee.value = 20;
-  comp.ratio.value = 4;
+  comp.threshold.value = -6;
+  comp.knee.value = 18;
+  comp.ratio.value = 3;
   comp.attack.value = 0.003;
   comp.release.value = 0.25;
 
@@ -92,7 +96,35 @@ function ensureContext(): AudioContext | null {
   reverbGain.connect(master);
 
   document.addEventListener("visibilitychange", onVisibility);
+  console.log("[oyster-sound] AudioContext created; state:", ctx.state); // TEMP DEBUG
   return ctx;
+}
+
+// TEMP DEBUG — a simple, clearly audible 440 Hz confirmation tone played once
+// on the first gesture so we can hear that audio is unlocked. Remove after.
+function playTestTone(c: AudioContext) {
+  if (!master) return;
+  const t = c.currentTime;
+  const g = c.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.linearRampToValueAtTime(0.1, t + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.32);
+  g.connect(master);
+  const o = c.createOscillator();
+  o.type = "sine";
+  o.frequency.value = 440;
+  o.connect(g);
+  o.start(t);
+  o.stop(t + 0.34);
+  o.onended = () => {
+    try {
+      o.disconnect();
+      g.disconnect();
+    } catch {
+      /* gone */
+    }
+  };
+  console.log("[oyster-sound] test tone 440 Hz played"); // TEMP DEBUG
 }
 
 /**
@@ -109,7 +141,14 @@ export function primeSound(): void {
   const start = () => {
     enabled = true;
     const c = ensureContext();
-    if (c && c.state === "suspended") c.resume().catch(() => {});
+    if (c) {
+      c.resume()
+        .then(() => {
+          console.log("[oyster-sound] unlocked; state:", c.state); // TEMP DEBUG
+          playTestTone(c); // TEMP DEBUG confirmation beep
+        })
+        .catch((err) => console.warn("[oyster-sound] resume failed", err)); // TEMP DEBUG
+    }
     EVENTS.forEach((e) => window.removeEventListener(e, start, true));
   };
   // Capture phase + passive: fires before a ring's own handlers, never blocks.
@@ -140,11 +179,13 @@ export function playOysterNote(index: number): void {
 
   const freq = NOTES[index] ?? NOTES[NOTES.length - 1];
   const t = c.currentTime;
+  console.log("[oyster-sound] ring", index + 1, Math.round(freq) + "Hz"); // TEMP DEBUG
 
-  // Soft envelope (fade in / exponential fade out) shared by every partial.
+  // Soft envelope: quick attack → short sustain plateau → gentle release.
   const env = c.createGain();
   env.gain.setValueAtTime(0.0001, t);
-  env.gain.linearRampToValueAtTime(0.9, t + ATTACK);
+  env.gain.linearRampToValueAtTime(PEAK, t + ATTACK);
+  env.gain.exponentialRampToValueAtTime(PEAK * SUSTAIN, t + DECAY_AT);
   env.gain.exponentialRampToValueAtTime(0.0001, t + DURATION);
   env.connect(master);
   if (reverb) env.connect(reverb);
