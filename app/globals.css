@@ -580,63 +580,48 @@ body {
     var(--aw-max)
   );
 }
+/* Ultra-thin contemporary "floating" gallery frame: a matte natural-wood
+   profile (~8–11px on desktop, less on small screens), no mat, no moulding,
+   no bevel — it barely defines the work and lets the artwork lead. A soft
+   drop shadow floats it off the wall. */
 .aw-frame {
   display: block;
   width: 100%;
-  padding: clamp(7px, 0.7vw, 12px);
-  border-radius: 1px;
-  background: linear-gradient(135deg, var(--wood-a), var(--wood-b));
-  box-shadow: inset 0 0 0 1px var(--wood-edge),
-    0 8px 26px -14px rgba(0, 0, 0, 0.55);
+  padding: clamp(4px, 0.55vw, 11px);
+  background: var(--wood);
+  box-shadow: 0 14px 32px -20px rgba(0, 0, 0, 0.5);
   transition: transform 0.5s cubic-bezier(0.16, 0.72, 0.24, 1),
     box-shadow 0.5s ease;
 }
 .aw:hover .aw-frame,
 .aw:focus-visible .aw-frame {
   transform: translateY(-4px);
-  box-shadow: inset 0 0 0 1px var(--wood-edge),
-    0 18px 38px -16px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 22px 44px -22px rgba(0, 0, 0, 0.55);
 }
-/* Frame profiles (extendable per frameStyle) */
+/* Matte natural woods — flat, restrained tones (low-contrast grain). */
 .aw-frame--oak {
-  --wood-a: #cbb99b;
-  --wood-b: #a98f6d;
-  --wood-edge: rgba(70, 52, 28, 0.35);
-}
-.aw-frame--walnut {
-  --wood-a: #8a6b4f;
-  --wood-b: #6a4f38;
-  --wood-edge: rgba(30, 18, 8, 0.4);
+  --wood: linear-gradient(155deg, #c9b899, #c1ad8c);
 }
 .aw-frame--ash {
-  --wood-a: #d7d2c7;
-  --wood-b: #bab5a8;
-  --wood-edge: rgba(60, 55, 45, 0.28);
+  --wood: linear-gradient(155deg, #d3cdc1, #c8c1b3);
+}
+.aw-frame--walnut {
+  --wood: linear-gradient(155deg, #8f7357, #7d6348);
 }
 .dark .aw-frame--oak {
-  --wood-a: #5b4d39;
-  --wood-b: #453a2b;
-  --wood-edge: rgba(0, 0, 0, 0.55);
-}
-.dark .aw-frame--walnut {
-  --wood-a: #4a3928;
-  --wood-b: #372a1d;
-  --wood-edge: rgba(0, 0, 0, 0.6);
+  --wood: linear-gradient(155deg, #5b4e3a, #514530);
 }
 .dark .aw-frame--ash {
-  --wood-a: #55524b;
-  --wood-b: #413f39;
-  --wood-edge: rgba(0, 0, 0, 0.5);
+  --wood: linear-gradient(155deg, #555249, #4b4840);
 }
+.dark .aw-frame--walnut {
+  --wood: linear-gradient(155deg, #4b3a29, #412f1f);
+}
+/* No mat — the thin wood sits directly on the artwork. */
 .aw-mat {
   display: block;
-  padding: clamp(5px, 0.6vw, 10px);
-  background: var(--mat-bg, #f6f4ef);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
-}
-.dark .aw-mat {
-  background: #0e1213;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  padding: 0;
+  background: transparent;
 }
 .aw-canvas {
   display: block;
@@ -1022,14 +1007,12 @@ body {
 }
 .aw-frame--wd {
   width: min(100%, calc(62vh * var(--w) / var(--h)));
-  padding: clamp(10px, 1.1vw, 18px);
-  border-radius: 1px;
-  background: linear-gradient(135deg, var(--wood-a, #cbb99b), var(--wood-b, #a98f6d));
-  box-shadow: inset 0 0 0 1px var(--wood-edge, rgba(70, 52, 28, 0.35)),
-    0 20px 50px -22px rgba(0, 0, 0, 0.6);
+  padding: clamp(6px, 0.7vw, 13px);
+  background: var(--wood, linear-gradient(155deg, #c9b899, #c1ad8c));
+  box-shadow: 0 30px 64px -32px rgba(0, 0, 0, 0.5);
 }
 .aw-frame--wd .aw-mat {
-  padding: clamp(8px, 1vw, 16px);
+  padding: 0;
 }
 .wd-info {
   flex: 0 0 auto;

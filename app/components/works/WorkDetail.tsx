@@ -30,7 +30,7 @@ export default function WorkDetail({
       <div className="wd-body">
         <div className="wd-stage">
           <div
-            className="aw-frame aw-frame--wd"
+            className={`aw-frame aw-frame--wd aw-frame--${work.frameStyle}`}
             style={
               {
                 "--w": work.widthCm,
