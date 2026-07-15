@@ -3,7 +3,12 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { NAV } from "../lib/nav";
-import { playShell, primeSound } from "../lib/sound";
+import {
+  playShell,
+  playShellEcho,
+  playShellBloom,
+  primeSound,
+} from "../lib/sound";
 import {
   OYSTER_VIEWBOX,
   OYSTER_CENTER,
@@ -46,23 +51,36 @@ export default function OysterNav({
   const [active, setActive] = useState(NAV[0]);
   const [par, setPar] = useState({ x: 0, y: 0 });
   const svgRef = useRef<SVGSVGElement>(null);
+  const lastRegion = useRef(-1);
 
-  // Enable the navigation sound on the visitor's first interaction (no button).
+  // Enable sound on the visitor's first interaction (no button) — both the
+  // interactive Home oyster and the decorative Contact oyster share it.
   useEffect(() => {
-    if (!decorative) primeSound();
-  }, [decorative]);
+    primeSound();
+  }, []);
 
   const sizeClass = decorative
     ? "h-[clamp(150px,24vw,240px)] w-auto max-w-[72vw] overflow-visible"
     : "h-[min(68vh,580px)] w-auto max-w-[86vw] overflow-visible lg:h-[min(78vh,680px)] lg:max-w-[92vw]";
 
-  // Soft cursor parallax: nudge the shell a few units toward the pointer.
+  // Soft cursor parallax: nudge the shell a few units toward the pointer. On
+  // the decorative Contact oyster, the cursor's distance from the centre also
+  // sounds a soft "movement layer" note as it crosses into a new ring (rate-
+  // limited so it never fires on every tiny move).
   function onMove(e: React.MouseEvent) {
     const r = svgRef.current?.getBoundingClientRect();
     if (!r) return;
     const nx = (e.clientX - r.left) / r.width - 0.5;
     const ny = (e.clientY - r.top) / r.height - 0.5;
     setPar({ x: nx * 14, y: ny * 14 });
+    if (decorative) {
+      const dist = Math.min(1, Math.hypot(nx, ny) * 2);
+      const idx = Math.min(8, Math.round(dist * 8));
+      if (idx !== lastRegion.current) {
+        lastRegion.current = idx;
+        playShellEcho(idx);
+      }
+    }
   }
 
   return (
@@ -75,7 +93,17 @@ export default function OysterNav({
         aria-label={decorative ? undefined : "Oyster shell navigation"}
         aria-hidden={decorative || undefined}
         onMouseMove={onMove}
-        onMouseLeave={() => setPar({ x: 0, y: 0 })}
+        onMouseLeave={() => {
+          setPar({ x: 0, y: 0 });
+          if (decorative) lastRegion.current = -1;
+        }}
+        onMouseEnter={decorative ? () => playShellEcho(3) : undefined}
+        onClick={
+          decorative
+            ? () =>
+                playShellBloom(lastRegion.current >= 0 ? lastRegion.current : 0)
+            : undefined
+        }
       >
         <defs>
           <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">

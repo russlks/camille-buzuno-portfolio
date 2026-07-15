@@ -1,25 +1,26 @@
 /* ---------------------------------------------------------------------------
-   One sound language for the whole site.
+   One quiet instrument for the whole site.
 
    A single shared AudioContext, master chain and soft convolution space, plus
-   a common pentatonic scale, so every interaction belongs to the same family.
-   Two "materials" share that core:
+   ONE C-major pentatonic scale, so every interaction belongs to the same
+   sonic identity and several notes triggered close together still harmonise.
+   Micro-variation (a few cents of detune, small gain/timing jitter) keeps
+   repeats from feeling mechanical; a voice limiter + cooldowns keep overlaps
+   quiet and calm.
 
-     • shell  — the oyster (Home): pearl / shell / shoreline. A rounded sine
-       body with faint inharmonic "pearl" partials and a whisper of filtered
-       noise (sea air), warmed by a gentle low-pass. Airy and resonant.
+   Materials, all from the same family:
+     • shell      — the oyster on Home: pearl / shell / shoreline.
+     • shell-echo — the smaller oyster on Contact: the same shell, quieter and
+       more intimate (hover "two shells touching" + position-based resonances).
+     • shell-bloom— clicking the Contact oyster: a deeper warm resonance with a
+       short restrained bowl-like tail and a distant-water wash.
+     • wood       — Selected Works: warm wood / canvas / gallery contact.
+     • air        — Artist Statement: paper / breath / delicate tonal ambience.
 
-     • wood   — Selected Works: wood / canvas / gallery. A warm low triangle
-       body with a short band-passed noise "tap" (finger on wood/canvas),
-       drier and lower than the shell. Tactile and grounded.
-
-   Both are quiet, refined and premium — no ocean recordings, no clichés.
-   Muted until the visitor's first interaction (autoplay-safe); silent while
-   the tab is hidden.
+   Muted until the first interaction (autoplay-safe); silent while hidden.
 --------------------------------------------------------------------------- */
 
-// C-major pentatonic. Shell rings play the upper register; wood plays an
-// octave lower (warmer) — same notes, same harmony, different material.
+// C-major pentatonic — the shared scale. Wood plays an octave lower (warmer).
 const SHELL_NOTES = [
   261.63, 293.66, 329.63, 392.0, 440.0, 523.25, 587.33, 659.25, 783.99,
 ];
@@ -31,6 +32,7 @@ const MASTER_GAIN = 0.5;
 const REVERB_WET = 0.14;
 const COOLDOWN_MS = 200; // per-source re-trigger guard
 const MIN_GAP_MS = 40; // global spacing so notes never stack loudly
+const MAX_VOICES = 5; // limit simultaneous layers
 
 let ctx: AudioContext | null = null;
 let master: GainNode | null = null;
@@ -38,8 +40,14 @@ let reverb: ConvolverNode | null = null;
 let noise: AudioBuffer | null = null;
 let enabled = false;
 let primed = false;
+let activeVoices = 0;
 const lastPlayed: Record<string, number> = {};
 let lastAny = 0;
+
+// A few cents of detune + small gain jitter so repeats never feel mechanical.
+const detune = (f: number) => f * (1 + (Math.random() * 2 - 1) * 0.004);
+const jitter = (base: number, amt = 0.12) =>
+  base * (1 - amt + Math.random() * amt * 2);
 
 function makeImpulse(c: AudioContext, seconds: number, decay: number): AudioBuffer {
   const len = Math.floor(c.sampleRate * seconds);
@@ -55,7 +63,7 @@ function makeImpulse(c: AudioContext, seconds: number, decay: number): AudioBuff
 
 function getNoise(c: AudioContext): AudioBuffer {
   if (!noise) {
-    const len = Math.floor(c.sampleRate * 0.5);
+    const len = Math.floor(c.sampleRate * 0.6);
     noise = c.createBuffer(1, len, c.sampleRate);
     const d = noise.getChannelData(0);
     for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
@@ -91,7 +99,6 @@ function ensureContext(): AudioContext | null {
   master.connect(comp);
   comp.connect(ctx.destination);
 
-  // Shared soft space — a calm room / shoreline air (no literal ocean).
   reverb = ctx.createConvolver();
   reverb.buffer = makeImpulse(ctx, 1.7, 2.6);
   const reverbGain = ctx.createGain();
@@ -119,13 +126,14 @@ export function primeSound(): void {
   );
 }
 
-// Shared gate: enabled + visible + cooldown. Returns the context or null.
+// Shared gate: enabled + visible + within polyphony + cooldown. Returns ctx.
 function gate(key: string): AudioContext | null {
   if (!enabled) return null;
   if (typeof document !== "undefined" && document.hidden) return null;
   const c = ensureContext();
   if (!c || !master) return null;
   if (c.state === "suspended") c.resume().catch(() => {});
+  if (activeVoices >= MAX_VOICES) return null;
   const now = typeof performance !== "undefined" ? performance.now() : Date.now();
   if (now - (lastPlayed[key] || 0) < COOLDOWN_MS) return null;
   if (now - lastAny < MIN_GAP_MS) return null;
@@ -134,17 +142,33 @@ function gate(key: string): AudioContext | null {
   return c;
 }
 
-/** Oyster voice — pearl / shell / shoreline. `index` selects the ring's note. */
+// Count the voice while it sounds, and tear it down cleanly when it ends.
+function voiceEnd(fundamental: AudioScheduledSourceNode, nodes: AudioNode[]) {
+  activeVoices += 1;
+  fundamental.onended = () => {
+    activeVoices = Math.max(0, activeVoices - 1);
+    nodes.forEach((n) => {
+      try {
+        n.disconnect();
+      } catch {
+        /* gone */
+      }
+    });
+  };
+}
+
+/** Oyster voice — pearl / shell / shoreline (Home). */
 export function playShell(index: number): void {
   const c = gate("shell" + index);
   if (!c || !master) return;
   const t = c.currentTime;
-  const freq = SHELL_NOTES[index] ?? SHELL_NOTES[SHELL_NOTES.length - 1];
+  const freq = detune(SHELL_NOTES[index] ?? SHELL_NOTES[SHELL_NOTES.length - 1]);
+  const peak = jitter(0.85);
 
   const env = c.createGain();
   env.gain.setValueAtTime(0.0001, t);
-  env.gain.linearRampToValueAtTime(0.85, t + 0.012);
-  env.gain.exponentialRampToValueAtTime(0.85 * 0.4, t + 0.16);
+  env.gain.linearRampToValueAtTime(peak, t + 0.012);
+  env.gain.exponentialRampToValueAtTime(peak * 0.4, t + 0.16);
   env.gain.exponentialRampToValueAtTime(0.0001, t + 0.95);
 
   const warmth = c.createBiquadFilter();
@@ -169,11 +193,10 @@ export function playShell(index: number): void {
     nodes.push(o, g);
     return o;
   };
-  const body = partial(1, 1); //        rounded shell body
-  partial(2.76, 0.1); //                inharmonic pearl partial
-  partial(5.4, 0.035); //               faint glassy sparkle
+  const body = partial(1, 1);
+  partial(2.76, 0.1); // inharmonic pearl
+  partial(5.4, 0.035); // faint glassy sparkle
 
-  // Sea-air breath — a whisper of band-passed noise, quickly gone.
   const nz = c.createBufferSource();
   nz.buffer = getNoise(c);
   const air = c.createBiquadFilter();
@@ -192,28 +215,155 @@ export function playShell(index: number): void {
   nz.stop(t + 0.25);
   nodes.push(nz, air, ng);
 
-  body.onended = () =>
-    nodes.forEach((n) => {
-      try {
-        n.disconnect();
-      } catch {
-        /* gone */
-      }
-    });
+  voiceEnd(body, nodes);
 }
 
-/** Selected Works voice — wood / canvas / gallery. `index` selects the note. */
+/** Contact oyster — the same shell, quieter and more intimate. Hover = "two
+    small shells touching"; cursor position selects the note (movement layer). */
+export function playShellEcho(index: number): void {
+  const c = gate("echo" + index);
+  if (!c || !master) return;
+  const t = c.currentTime;
+  const base = SHELL_NOTES[((index % SHELL_NOTES.length) + SHELL_NOTES.length) % SHELL_NOTES.length];
+  const freq = detune(base);
+  const peak = jitter(0.4); // markedly softer than Home
+
+  const env = c.createGain();
+  env.gain.setValueAtTime(0.0001, t);
+  env.gain.linearRampToValueAtTime(peak, t + 0.02);
+  env.gain.exponentialRampToValueAtTime(0.0001, t + 0.6);
+
+  const warmth = c.createBiquadFilter();
+  warmth.type = "lowpass";
+  warmth.frequency.value = 3200;
+  warmth.Q.value = 0.5;
+  env.connect(warmth);
+  warmth.connect(master);
+  const wet = c.createGain();
+  wet.gain.value = 1.4; // more space — distant, intimate
+  if (reverb) {
+    warmth.connect(wet);
+    wet.connect(reverb);
+  }
+
+  const nodes: AudioNode[] = [env, warmth, wet];
+  const partial = (mult: number, level: number) => {
+    const o = c.createOscillator();
+    o.type = "sine";
+    o.frequency.value = freq * mult;
+    const g = c.createGain();
+    g.gain.value = level;
+    o.connect(g);
+    g.connect(env);
+    o.start(t);
+    o.stop(t + 0.65);
+    nodes.push(o, g);
+    return o;
+  };
+  const body = partial(1, 1);
+  partial(3.01, 0.05); // faint pearl
+
+  // a very short, high, soft tick — two small shells touching
+  const nz = c.createBufferSource();
+  nz.buffer = getNoise(c);
+  const tick = c.createBiquadFilter();
+  tick.type = "bandpass";
+  tick.frequency.value = detune(base * 6);
+  tick.Q.value = 3;
+  const tg = c.createGain();
+  tg.gain.setValueAtTime(0.04, t);
+  tg.gain.exponentialRampToValueAtTime(0.0001, t + 0.03);
+  nz.connect(tick);
+  tick.connect(tg);
+  tg.connect(master);
+  nz.start(t);
+  nz.stop(t + 0.04);
+  nodes.push(nz, tick, tg);
+
+  voiceEnd(body, nodes);
+}
+
+/** Contact oyster click — a deeper, warmer shell resonance with a short,
+    restrained bowl-like tail and a distant-water wash. */
+export function playShellBloom(index: number): void {
+  const c = gate("bloom");
+  if (!c || !master) return;
+  const t = c.currentTime;
+  const base = SHELL_NOTES[Math.min(2, Math.abs(index) % 3)]; // low, warm
+  const freq = detune(base);
+
+  const env = c.createGain();
+  env.gain.setValueAtTime(0.0001, t);
+  env.gain.linearRampToValueAtTime(0.5, t + 0.03);
+  env.gain.exponentialRampToValueAtTime(0.18, t + 0.4);
+  env.gain.exponentialRampToValueAtTime(0.0001, t + 1.3); // short, restrained tail
+
+  const warmth = c.createBiquadFilter();
+  warmth.type = "lowpass";
+  warmth.frequency.value = 2200;
+  warmth.Q.value = 0.6;
+  env.connect(warmth);
+  warmth.connect(master);
+  const wet = c.createGain();
+  wet.gain.value = 1.2;
+  if (reverb) {
+    warmth.connect(wet);
+    wet.connect(reverb);
+  }
+
+  const nodes: AudioNode[] = [env, warmth, wet];
+  const partial = (mult: number, level: number) => {
+    const o = c.createOscillator();
+    o.type = "sine";
+    o.frequency.value = freq * mult;
+    const g = c.createGain();
+    g.gain.value = level;
+    o.connect(g);
+    g.connect(env);
+    o.start(t);
+    o.stop(t + 1.4);
+    nodes.push(o, g);
+    return o;
+  };
+  const body = partial(1, 1);
+  partial(2.004, 0.18); // gentle beating — bowl-like, never metallic
+  partial(3.02, 0.06);
+
+  // distant water / marine wash
+  const nz = c.createBufferSource();
+  nz.buffer = getNoise(c);
+  nz.loop = true;
+  const lp = c.createBiquadFilter();
+  lp.type = "lowpass";
+  lp.frequency.value = 700;
+  lp.Q.value = 0.4;
+  const wg = c.createGain();
+  wg.gain.setValueAtTime(0.0001, t);
+  wg.gain.linearRampToValueAtTime(0.05, t + 0.25);
+  wg.gain.exponentialRampToValueAtTime(0.0001, t + 1.0);
+  nz.connect(lp);
+  lp.connect(wg);
+  wg.connect(master);
+  if (reverb) wg.connect(reverb);
+  nz.start(t);
+  nz.stop(t + 1.05);
+  nodes.push(nz, lp, wg);
+
+  voiceEnd(body, nodes);
+}
+
+/** Selected Works voice — wood / canvas / gallery. */
 export function playWood(index: number): void {
   const c = gate("wood" + index);
   if (!c || !master) return;
   const t = c.currentTime;
-  const freq = WOOD_NOTES[index % WOOD_NOTES.length];
+  const freq = detune(WOOD_NOTES[index % WOOD_NOTES.length]);
 
   const env = c.createGain();
   env.gain.setValueAtTime(0.0001, t);
-  env.gain.linearRampToValueAtTime(0.9, t + 0.006); //   tap attack
-  env.gain.exponentialRampToValueAtTime(0.9 * 0.4, t + 0.13); // short sustain
-  env.gain.exponentialRampToValueAtTime(0.0001, t + 0.7); //    warm release
+  env.gain.linearRampToValueAtTime(jitter(0.9), t + 0.006);
+  env.gain.exponentialRampToValueAtTime(0.36, t + 0.13);
+  env.gain.exponentialRampToValueAtTime(0.0001, t + 0.7);
 
   const warmth = c.createBiquadFilter();
   warmth.type = "lowpass";
@@ -237,10 +387,9 @@ export function playWood(index: number): void {
     nodes.push(o, g);
     return o;
   };
-  const body = part(1, 0.85, "triangle"); // warm wooden body
-  part(2.01, 0.14, "sine"); //              soft overtone
+  const body = part(1, 0.85, "triangle");
+  part(2.01, 0.14, "sine");
 
-  // Tactile tap — a short band-passed noise, finger on wood / canvas.
   const nz = c.createBufferSource();
   nz.buffer = getNoise(c);
   const tap = c.createBiquadFilter();
@@ -257,12 +406,50 @@ export function playWood(index: number): void {
   nz.stop(t + 0.06);
   nodes.push(nz, tap, ng);
 
-  body.onended = () =>
-    nodes.forEach((n) => {
-      try {
-        n.disconnect();
-      } catch {
-        /* gone */
-      }
-    });
+  voiceEnd(body, nodes);
+}
+
+/** Artist Statement voice — air / paper / quiet breath + a delicate tone. */
+export function playAir(index: number): void {
+  const c = gate("air" + index);
+  if (!c || !master) return;
+  const t = c.currentTime;
+  const freq = detune(SHELL_NOTES[(index + 4) % SHELL_NOTES.length]);
+  const nodes: AudioNode[] = [];
+
+  // paper / breath — a soft band of moving air
+  const nz = c.createBufferSource();
+  nz.buffer = getNoise(c);
+  const bp = c.createBiquadFilter();
+  bp.type = "bandpass";
+  bp.frequency.value = 2400;
+  bp.Q.value = 0.8;
+  const bg = c.createGain();
+  bg.gain.setValueAtTime(0.0001, t);
+  bg.gain.linearRampToValueAtTime(0.035, t + 0.06);
+  bg.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
+  nz.connect(bp);
+  bp.connect(bg);
+  bg.connect(master);
+  if (reverb) bg.connect(reverb);
+  nz.start(t);
+  nz.stop(t + 0.45);
+  nodes.push(nz, bp, bg);
+
+  // a delicate high tone
+  const env = c.createGain();
+  env.gain.setValueAtTime(0.0001, t);
+  env.gain.linearRampToValueAtTime(jitter(0.18), t + 0.03);
+  env.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+  env.connect(master);
+  if (reverb) env.connect(reverb);
+  const o = c.createOscillator();
+  o.type = "sine";
+  o.frequency.value = freq;
+  o.connect(env);
+  o.start(t);
+  o.stop(t + 0.55);
+  nodes.push(env, o);
+
+  voiceEnd(o, nodes);
 }

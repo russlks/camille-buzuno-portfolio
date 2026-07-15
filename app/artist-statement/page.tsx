@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import SiteHeader from "../components/SiteHeader";
+import SoundLink from "../components/SoundLink";
 
 export const metadata: Metadata = {
   title: "Artist Statement — Camille Buzuno",
@@ -50,8 +50,9 @@ export default function ArtistStatementPage() {
         >
           <p className="label-mono">Continue Exploring</p>
 
-          <Link
+          <SoundLink
             href="/works"
+            note={0}
             className="group mt-7 inline-flex items-baseline gap-3 text-fg transition-colors duration-300 hover:text-accent"
           >
             <span className="text-[clamp(1.7rem,4.5vw,2.5rem)] font-light leading-none tracking-tight">
@@ -63,11 +64,12 @@ export default function ArtistStatementPage() {
             >
               →
             </span>
-          </Link>
+          </SoundLink>
 
           <div className="mt-12 flex items-center justify-between">
-            <Link
+            <SoundLink
               href="/"
+              note={2}
               className="group label-mono inline-flex items-center gap-2 transition-colors duration-300 hover:!text-accent"
             >
               <span
@@ -77,9 +79,10 @@ export default function ArtistStatementPage() {
                 ←
               </span>
               Home
-            </Link>
-            <Link
+            </SoundLink>
+            <SoundLink
               href="/contact"
+              note={4}
               className="group label-mono inline-flex items-center gap-2 transition-colors duration-300 hover:!text-accent"
             >
               Contact
@@ -89,7 +92,7 @@ export default function ArtistStatementPage() {
               >
                 →
               </span>
-            </Link>
+            </SoundLink>
           </div>
         </nav>
       </main>
