@@ -2,10 +2,12 @@
 
 import { useCallback, useState } from "react";
 
-/* The artwork surface. When the real image is present it is shown cleanly,
-   object-fit: contain, no crop, no filter / overlay / opacity change. If the
-   file isn't there yet (or fails to load) a neutral placeholder labelled with
-   the artwork title is shown instead — the database entry is unaffected. */
+/* The artwork surface. The real image is shown cleanly and in-flow, so the
+   plate hugs the image's true aspect ratio — no letterboxing, no mat, no crop,
+   no filter/overlay/opacity change. Its on-screen *scale* is set by the card
+   (from the real cm dimensions); the height simply follows the image. If the
+   file isn't there yet (or fails to load) a neutral placeholder shaped by the
+   catalogue dimensions is shown instead — the database entry is unaffected. */
 export default function ArtworkCanvas({
   image,
   alt,
@@ -30,20 +32,22 @@ export default function ArtworkCanvas({
 
   return (
     <span className="aw-canvas" data-series={series}>
-      <span className="aw-placeholder" aria-hidden={showImage || undefined}>
-        <span className="aw-placeholder-label">Image forthcoming</span>
-        <span className="aw-placeholder-title">{title}</span>
-      </span>
       {showImage ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
+          className="aw-img"
           ref={check}
           src={image}
           alt={alt}
           loading={eager ? "eager" : "lazy"}
           onError={() => setFailed(true)}
         />
-      ) : null}
+      ) : (
+        <span className="aw-placeholder">
+          <span className="aw-placeholder-label">Image forthcoming</span>
+          <span className="aw-placeholder-title">{title}</span>
+        </span>
+      )}
     </span>
   );
 }

@@ -31,7 +31,7 @@ export default function WorkDetail({
       <div className="wd-body">
         <div className="wd-stage">
           <div
-            className={`aw-frame aw-frame--wd aw-frame--${work.frameStyle}`}
+            className="wk-plate wk-plate--lg"
             style={
               {
                 "--w": work.widthCm,
@@ -39,15 +39,13 @@ export default function WorkDetail({
               } as React.CSSProperties
             }
           >
-            <span className="aw-mat">
-              <ArtworkCanvas
-                image={work.image}
-                alt={work.displayTitle}
-                series={work.series}
-                title={work.displayTitle}
-                eager
-              />
-            </span>
+            <ArtworkCanvas
+              image={work.image}
+              alt={work.displayTitle}
+              series={work.series}
+              title={work.displayTitle}
+              eager
+            />
           </div>
         </div>
 

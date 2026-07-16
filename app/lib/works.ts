@@ -100,61 +100,59 @@ export function workNeighbors(slug: string): {
 }
 
 /* ---------------------------------------------------------------------------
-   Curation — arrange the (filtered) works into intentional exhibition rows
-   rather than an auto-packed grid: never more than three per row; a monumental
-   work hangs alone; a large work takes at most one small counterpoint; small /
-   medium works gather in calm groups; rows alternate placement for rhythm.
+   Display scale — the artwork's on-screen size is guided by its real
+   dimensions, but *compressed*: we never reproduce a literal cm→px ratio.
+
+   We take the geometric mean of the two sides (√area, an "effective size" in
+   cm), map it through a narrow band, and clamp. The result is a controlled
+   visual hierarchy — a monumental canvas reads clearly larger than a small
+   one, yet the smallest work still has presence and the largest never
+   dominates the page. The value is a desktop reference *width*; the layout
+   scales it down responsively (--gscale) and the canvas derives its height
+   from the true aspect ratio, so nothing is ever cropped or stretched.
 --------------------------------------------------------------------------- */
-export type RowAlign = "center" | "left" | "right" | "spread";
-export type GalleryRow = { items: Artwork[]; align: RowAlign; breathe: boolean };
+const SCALE = {
+  eMin: 75, // ~ a 70×90 canvas
+  eMax: 172, // ~ a 160×180 canvas
+  hMin: 278, // smallest work's reference height (px)
+  hMax: 404, // largest work's reference height (px)
+};
 
-export function curateRows(works: Artwork[]): GalleryRow[] {
-  const grouped: Artwork[][] = [];
+export function cardWidthPx(w: Pick<Artwork, "widthCm" | "heightCm">): number {
+  const effective = Math.sqrt(w.widthCm * w.heightCm);
+  const t = Math.min(
+    1,
+    Math.max(0, (effective - SCALE.eMin) / (SCALE.eMax - SCALE.eMin))
+  );
+  const height = SCALE.hMin + t * (SCALE.hMax - SCALE.hMin);
+  return Math.round(height * (w.widthCm / w.heightCm));
+}
+
+/* ---------------------------------------------------------------------------
+   Curation — arrange the (filtered) works into intentional rows rather than an
+   auto-packed grid. Calm and editorial: at most three per row, biased to
+   balanced pairs, with the occasional trio for rhythm and never an orphaned
+   single dangling at the end. Real order is preserved (so it matches the
+   detail view's prev/next), and the varied sizes carry the composition —
+   pairs read as "two balanced" or "one dominant + one supporting" naturally.
+--------------------------------------------------------------------------- */
+export function curateRows(works: Artwork[]): Artwork[][] {
+  const n = works.length;
+  if (n <= 3) return n === 0 ? [] : [works];
+
+  const rhythm = [2, 2, 3]; // pairs, with a trio every third row
+  const rows: Artwork[][] = [];
   let i = 0;
-  while (i < works.length) {
-    const cat = sizeCategory(works[i]);
-    if (cat === "Monumental") {
-      grouped.push([works[i]]);
-      i += 1;
-    } else if (cat === "Large") {
-      const row = [works[i]];
-      i += 1;
-      if (i < works.length && sizeCategory(works[i]) === "Small") {
-        row.push(works[i]);
-        i += 1;
-      }
-      grouped.push(row);
-    } else {
-      const row = [works[i]];
-      i += 1;
-      while (i < works.length && row.length < 3) {
-        const nc = sizeCategory(works[i]);
-        if (nc === "Monumental" || nc === "Large") break;
-        row.push(works[i]);
-        i += 1;
-      }
-      grouped.push(row);
-    }
+  let r = 0;
+  while (i < n) {
+    const remaining = n - i;
+    let len = Math.min(rhythm[r % rhythm.length], remaining);
+    // Never leave a lone work at the very end: absorb it (up to three) or
+    // shrink this row so the last row keeps a companion.
+    if (remaining - len === 1) len = len < 3 ? len + 1 : len - 1;
+    rows.push(works.slice(i, i + len));
+    i += len;
+    r += 1;
   }
-
-  let soloCount = 0;
-  return grouped.map((items) => {
-    const breathe = items.some((w) => {
-      const c = sizeCategory(w);
-      return c === "Monumental" || c === "Large";
-    });
-    let align: RowAlign;
-    if (items.length === 1) {
-      align =
-        sizeCategory(items[0]) === "Monumental"
-          ? "center"
-          : soloCount % 2 === 0
-            ? "left"
-            : "right";
-      soloCount += 1;
-    } else {
-      align = "spread";
-    }
-    return { items, align, breathe };
-  });
+  return rows;
 }

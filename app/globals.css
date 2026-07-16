@@ -435,432 +435,219 @@ body {
 .works-head {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.55rem;
 }
 .works-title {
   font-weight: 300;
   letter-spacing: -0.02em;
-  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  line-height: 1;
   color: var(--fg);
 }
 
-/* Layout: slim sticky panel + gallery on desktop; drawer below lg. */
-.works-body {
-  display: flex;
-  gap: clamp(1.5rem, 3vw, 3.25rem);
-  margin-top: 2.25rem;
-}
-.works-gallery-wrap {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-.works-panel {
-  display: none;
-}
-@media (min-width: 1024px) {
-  .works-panel {
-    display: block;
-    flex: 0 0 240px;
-    width: 240px;
-    position: sticky;
-    top: 88px;
-    align-self: flex-start;
-    max-height: calc(100vh - 112px);
-    overflow-y: auto;
-    padding-right: 0.75rem;
-  }
-}
-
-/* Tablet / mobile toolbar */
-.works-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 1.5rem;
-}
-@media (min-width: 1024px) {
-  .works-bar {
-    display: none;
-  }
-}
-.works-filter-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  border: 1px solid var(--hair);
-  padding: 0.55rem 0.95rem;
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.66rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--fg);
-  transition: border-color 0.3s ease, color 0.3s ease;
-}
-.works-filter-btn:hover {
-  border-color: var(--accent);
-}
-.works-count-inline {
-  color: var(--faint);
-}
-
-/* ---- Gallery: free-flowing hang, sized from real cm dimensions ---- */
-.gallery {
-  --ppc: 1.05; /* pixels per cm — responsive; drives relative sizes */
-  --aw-min: 104px;
-  --aw-max: 86vw;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  /* generous, intentional space between hung rows */
-  gap: clamp(3.5rem, 9vw, 8.5rem);
-  margin-top: 2rem;
-}
-@media (min-width: 640px) {
-  .gallery {
-    --ppc: 1.5;
-    --aw-max: 60vw;
-  }
-}
-@media (min-width: 1024px) {
-  .gallery {
-    --ppc: 2.1;
-    --aw-max: 440px;
-    margin-top: 0;
-  }
-}
-
-/* Each curated row: a calm band, centred within a gallery-wall width, with
-   large gaps. On desktop the placement varies (left / right / centred /
-   spread) for rhythm; below lg it settles to a centred, wrapping flow. */
-.gallery-row {
+/* ---------------------------------------------------------------------------
+   Filter bar — a single compact horizontal row: series segmented control on
+   the left, actions (Filters, Prints ↗) on the right. No sidebar.
+--------------------------------------------------------------------------- */
+.wk-bar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  gap: clamp(2rem, 5vw, 5.5rem);
-  width: 100%;
-  max-width: 74rem;
-  margin-inline: auto;
-}
-.gallery-row.is-breathe {
-  margin-block: clamp(0.5rem, 3vw, 3rem);
-}
-@media (min-width: 1024px) {
-  .gallery-row {
-    flex-wrap: nowrap;
-  }
-  .gallery-row.is-center {
-    justify-content: center;
-  }
-  .gallery-row.is-left {
-    justify-content: flex-start;
-  }
-  .gallery-row.is-right {
-    justify-content: flex-end;
-  }
-  .gallery-row.is-spread {
-    justify-content: space-between;
-  }
-}
-.works-empty {
-  width: 100%;
-  text-align: center;
-  padding: 5rem 0;
-  color: var(--muted);
-}
-
-.aw {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  text-decoration: none;
-  width: clamp(
-    var(--aw-min),
-    calc(var(--w) * var(--ppc) * 1px),
-    var(--aw-max)
-  );
-}
-/* Ultra-thin contemporary "floating" gallery frame: a matte natural-wood
-   profile (~8–11px on desktop, less on small screens), no mat, no moulding,
-   no bevel — it barely defines the work and lets the artwork lead. A soft
-   drop shadow floats it off the wall. */
-.aw-frame {
-  display: block;
-  width: 100%;
-  padding: clamp(4px, 0.55vw, 11px);
-  background: var(--wood);
-  box-shadow: 0 14px 32px -20px rgba(0, 0, 0, 0.5);
-  transition: transform 0.5s cubic-bezier(0.16, 0.72, 0.24, 1),
-    box-shadow 0.5s ease;
-}
-.aw:hover .aw-frame,
-.aw:focus-visible .aw-frame {
-  transform: translateY(-4px);
-  box-shadow: 0 22px 44px -22px rgba(0, 0, 0, 0.55);
-}
-/* Matte natural woods — flat, restrained tones (low-contrast grain). */
-.aw-frame--oak,
-.aw-frame--thin-oak {
-  --wood: linear-gradient(155deg, #c9b899, #c1ad8c);
-}
-.aw-frame--ash {
-  --wood: linear-gradient(155deg, #d3cdc1, #c8c1b3);
-}
-.aw-frame--walnut {
-  --wood: linear-gradient(155deg, #8f7357, #7d6348);
-}
-.dark .aw-frame--oak,
-.dark .aw-frame--thin-oak {
-  --wood: linear-gradient(155deg, #5b4e3a, #514530);
-}
-.dark .aw-frame--ash {
-  --wood: linear-gradient(155deg, #555249, #4b4840);
-}
-.dark .aw-frame--walnut {
-  --wood: linear-gradient(155deg, #4b3a29, #412f1f);
-}
-/* No mat — the thin wood sits directly on the artwork. */
-.aw-mat {
-  display: block;
-  padding: 0;
-  background: transparent;
-}
-.aw-canvas {
-  position: relative;
-  display: block;
-  aspect-ratio: var(--w) / var(--h);
-  overflow: hidden;
-  --tint: 150, 150, 150;
-  --canvas-a: #efece5;
-  --canvas-b: #e2ddd3;
-  background: radial-gradient(
-      120% 120% at 30% 22%,
-      rgba(var(--tint), 0.12),
-      rgba(var(--tint), 0) 62%
-    ),
-    linear-gradient(160deg, var(--canvas-a), var(--canvas-b));
-}
-.dark .aw-canvas {
-  --canvas-a: #191f20;
-  --canvas-b: #101415;
-}
-.aw-canvas[data-series="Mermaids in Our Time"] {
-  --tint: 20, 165, 175;
-}
-.aw-canvas[data-series="Sketches"] {
-  --tint: 150, 138, 116;
-}
-.aw-canvas[data-series="Early Works"] {
-  --tint: 168, 128, 88;
-}
-.aw-canvas[data-series="Individual Works"] {
-  --tint: 118, 138, 150;
-}
-/* Real artwork image — clean, uncropped, no filter/overlay/opacity change.
-   Its aspect ratio matches the canvas, so contain fills it edge-to-edge and
-   covers the placeholder beneath. */
-.aw-canvas img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-}
-/* Neutral placeholder shown until the real image is present. */
-.aw-placeholder {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.55rem;
-  padding: 12%;
-  text-align: center;
-}
-.aw-placeholder-label {
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.5rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--faint);
-  opacity: 0.75;
-}
-.aw-placeholder-title {
-  font-weight: 300;
-  font-size: clamp(0.72rem, 1.1vw, 1rem);
-  line-height: 1.25;
-  color: var(--muted);
-}
-/* Gallery label — a quiet museum caption revealed on hover. */
-.aw-label {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  opacity: 0;
-  transform: translateY(4px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-.aw:hover .aw-label,
-.aw:focus-visible .aw-label {
-  opacity: 1;
-  transform: none;
-}
-.aw-label-title {
-  font-size: 0.84rem;
-  font-weight: 300;
-  color: var(--fg);
-}
-.aw-label-meta {
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.58rem;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-}
-
-/* ---- Filter panel ---- */
-.fp {
-  display: flex;
-  flex-direction: column;
-  gap: 1.55rem;
-}
-.fp-collection {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--hair);
-}
-.fp-collection-item {
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 0.6rem 0.8rem;
+  gap: 0.75rem 1.5rem;
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--hair);
+}
+.wk-series {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.15rem;
+}
+.wk-chip {
+  position: relative;
   font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.62rem;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--faint);
+  padding: 0.4rem 0.7rem;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.wk-chip::after {
+  content: "";
+  position: absolute;
+  left: 0.7rem;
+  right: 0.7rem;
+  bottom: 0.15rem;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.3s cubic-bezier(0.16, 0.72, 0.24, 1);
+}
+.wk-chip:hover {
+  color: var(--muted);
+}
+.wk-chip.is-active {
+  color: var(--fg);
+}
+.wk-chip.is-active::after {
+  transform: scaleX(1);
+}
+
+.wk-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+}
+.wk-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--muted);
+  background: none;
+  border: 0;
+  cursor: pointer;
   text-decoration: none;
+  transition: color 0.3s ease;
 }
-.fp-collection-item.is-active {
-  color: var(--fg);
-  background: var(--accent-soft);
-  box-shadow: inset 2px 0 0 var(--accent);
-}
-.fp-collection-link {
-  border-top: 1px solid var(--hair);
-  transition: color 0.3s ease, background 0.3s ease;
-}
-.fp-collection-link:hover {
+.wk-action:hover {
   color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 6%, transparent);
 }
-.fp-ext {
-  opacity: 0.75;
+.wk-action-sign {
+  color: var(--faint);
+  transition: color 0.3s ease, transform 0.3s ease;
 }
-.fp-meta {
+.wk-action:hover .wk-action-sign {
+  color: var(--accent);
+}
+.wk-action-count {
+  color: var(--accent);
+}
+.wk-action--prints .wk-ext {
+  font-size: 0.72rem;
+  opacity: 0.8;
+}
+
+/* ---------------------------------------------------------------------------
+   Expandable filter panel — a restrained, animated drop below the bar (0fr→1fr
+   grid so height animates without magic numbers). Availability, Year, Medium,
+   Size only; series lives in the bar's segmented control.
+--------------------------------------------------------------------------- */
+.wk-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.42s cubic-bezier(0.16, 0.72, 0.24, 1);
+}
+.wk-panel.is-open {
+  grid-template-rows: 1fr;
+}
+.wk-panel-clip {
+  overflow: hidden;
+  min-height: 0;
+}
+.wk-panel-inner {
+  padding: clamp(1.5rem, 3vw, 2.25rem) 0 clamp(1.5rem, 3vw, 2rem);
+  border-bottom: 1px solid var(--hair);
+}
+.wk-panel-head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.4rem;
 }
-.fp-reset {
+.wk-panel-count {
+  color: var(--faint);
+}
+.wk-reset {
   font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.6rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
+  background: none;
+  border: 0;
+  cursor: pointer;
   transition: color 0.3s ease;
 }
-.fp-reset:disabled {
-  opacity: 0.4;
+.wk-reset:disabled {
+  opacity: 0.35;
   cursor: default;
 }
-.fp-reset:not(:disabled):hover {
+.wk-reset:not(:disabled):hover {
   color: var(--accent);
 }
-.fp-group {
+.wk-fgrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.75rem 2.5rem;
+}
+@media (min-width: 640px) {
+  .wk-fgrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (min-width: 960px) {
+  .wk-fgrid {
+    grid-template-columns: 1.1fr 1.3fr 1.1fr 1fr;
+    align-items: start;
+  }
+}
+.wk-fgroup {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.85rem;
 }
-.fp-group-title {
+.wk-fgroup-title {
   font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.58rem;
+  font-size: 0.56rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--faint);
 }
-.fp-group-body {
+.wk-fchips {
   display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
+  flex-wrap: wrap;
+  gap: 0.4rem;
 }
-.fp-check {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.55rem;
-  padding: 0.3rem 0;
-  cursor: pointer;
+.wk-fchip {
+  font-size: 0.74rem;
+  font-weight: 300;
+  letter-spacing: 0.01em;
   color: var(--muted);
-  transition: color 0.25s ease;
-}
-.fp-check:hover {
-  color: var(--fg);
-}
-.fp-check.is-checked {
-  color: var(--fg);
-}
-.fp-box {
-  flex: 0 0 auto;
-  width: 14px;
-  height: 14px;
-  margin-top: 2px;
+  padding: 0.32rem 0.7rem;
   border: 1px solid var(--hair);
-  border-radius: 3px;
-  position: relative;
-  transition: border-color 0.25s ease, background 0.25s ease;
+  border-radius: 999px;
+  background: none;
+  cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
 }
-.fp-check:hover .fp-box {
+.wk-fchip:hover {
+  color: var(--fg);
   border-color: var(--muted);
 }
-.fp-check.is-checked .fp-box {
-  border-color: var(--accent);
-  background: var(--accent);
-}
-.fp-check.is-checked .fp-box::after {
-  content: "";
-  position: absolute;
-  left: 4px;
-  top: 1px;
-  width: 4px;
-  height: 8px;
-  border: solid #fff;
-  border-width: 0 1.6px 1.6px 0;
-  transform: rotate(45deg);
-}
-.fp-check-text {
-  display: flex;
-  flex-direction: column;
-  font-size: 0.82rem;
-  line-height: 1.3;
-}
-.fp-check-hint {
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.54rem;
-  letter-spacing: 0.05em;
-  color: var(--faint);
-  margin-top: 1px;
-}
-.fp-count {
-  color: var(--faint);
-  font-size: 0.6rem;
+.wk-fchip.is-on {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  background: var(--accent-soft);
 }
 
-/* ---- Dual-handle year range ---- */
+/* ---- Dual-handle year range (reused, minimal) ---- */
 .yr {
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
+  max-width: 15rem;
 }
 .yr-values {
   display: flex;
@@ -931,70 +718,206 @@ body {
   border: none;
 }
 
-/* ---- Filter drawer (tablet / mobile) ---- */
-.works-drawer {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  visibility: hidden;
-  pointer-events: none;
-}
-.works-drawer.is-open {
-  visibility: visible;
-  pointer-events: auto;
-}
-@media (min-width: 1024px) {
-  .works-drawer {
-    display: none;
-  }
-}
-.works-drawer-scrim {
-  position: absolute;
-  inset: 0;
-  border: 0;
-  background: rgba(4, 8, 9, 0.45);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  cursor: pointer;
-}
-.works-drawer.is-open .works-drawer-scrim {
-  opacity: 1;
-}
-.works-drawer-panel {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: min(86vw, 340px);
+/* ---------------------------------------------------------------------------
+   Gallery — centred, curated rows. Real dimensions guide the widths (via
+   --cardw from cardWidthPx), scaled responsively by --gscale, and clamped so
+   works stay important without dominating. Close, intentional spacing.
+--------------------------------------------------------------------------- */
+.wk-gallery {
+  --gscale: 1;
+  --wk-min: 200px;
+  --wk-max: 430px;
   display: flex;
   flex-direction: column;
-  background: var(--bg);
-  border-right: 1px solid var(--hair);
-  transform: translateX(-100%);
-  transition: transform 0.42s cubic-bezier(0.16, 0.72, 0.24, 1);
+  align-items: center;
+  gap: clamp(2.75rem, 5vw, 4rem);
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
 }
-.works-drawer.is-open .works-drawer-panel {
+@media (max-width: 1023px) {
+  .wk-gallery {
+    --gscale: 0.86;
+  }
+}
+.wk-row {
+  --row-gap: clamp(1.5rem, 2.6vw, 2.25rem);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--row-gap);
+  width: 100%;
+}
+.wk-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  text-decoration: none;
+  width: clamp(
+    var(--wk-min),
+    calc(var(--cardw) * var(--gscale) * 1px),
+    var(--wk-max)
+  );
+}
+@media (min-width: 681px) {
+  .wk-row[data-count="2"] .wk-card {
+    max-width: calc((100% - var(--row-gap)) / 2);
+  }
+  .wk-row[data-count="3"] .wk-card {
+    max-width: calc((100% - 2 * var(--row-gap)) / 3);
+  }
+}
+
+/* Frameless "plate" — the artwork floats off the wall on a soft shadow with a
+   single hairline edge. No mat, no moulding, no beige. */
+/* Ultra-thin contemporary wooden frame (BLODFLÄDER-like): a flat, simple
+   square profile ~4–6px, natural oak, sitting directly on the artwork edge —
+   no mat, no bevel, no inner white border. The faint gradient is just natural
+   grain variation; a subtle shadow floats it. On the dark ground the oak is
+   muted to a deep walnut so the frame recedes and the artwork stays the focus. */
+.wk-plate {
+  --frame: linear-gradient(135deg, #d0bf9c 0%, #c4ae87 55%, #bca67e 100%);
+  --frame-edge: rgba(96, 74, 42, 0.28);
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: clamp(4px, 0.5vw, 6px);
+  background: var(--frame);
+  box-shadow: 0 0 0 0.5px var(--frame-edge),
+    0 18px 40px -26px rgba(24, 18, 6, 0.5);
+  transition: transform 0.5s cubic-bezier(0.16, 0.72, 0.24, 1),
+    box-shadow 0.5s ease;
+}
+.dark .wk-plate {
+  --frame: linear-gradient(135deg, #4f4534 0%, #453a29 55%, #3c3222 100%);
+  --frame-edge: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 0.5px var(--frame-edge),
+    0 20px 46px -26px rgba(0, 0, 0, 0.8);
+}
+/* Crisp the rabbet line where the oak meets the canvas, without a mat. */
+.wk-plate .aw-canvas {
+  box-shadow: 0 0 0 0.5px rgba(24, 18, 6, 0.14) inset;
+}
+.dark .wk-plate .aw-canvas {
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.4) inset;
+}
+.wk-card:hover .wk-plate,
+.wk-card:focus-visible .wk-plate {
+  transform: translateY(-4px);
+  box-shadow: 0 0 0 0.5px var(--frame-edge),
+    0 30px 56px -30px rgba(24, 18, 6, 0.55);
+}
+.dark .wk-card:hover .wk-plate,
+.dark .wk-card:focus-visible .wk-plate {
+  box-shadow: 0 0 0 0.5px var(--frame-edge),
+    0 32px 60px -30px rgba(0, 0, 0, 0.85);
+}
+
+/* The artwork surface — neutral gallery wall behind any letterboxing; the
+   image sits object-fit: contain, uncropped and unfiltered. */
+.aw-canvas {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  --wall: #eeeeec;
+  background: var(--wall);
+}
+.dark .aw-canvas {
+  --wall: #12171a;
+}
+/* In-flow image — the plate takes the image's true aspect ratio (no
+   letterbox, no crop). */
+.aw-canvas .aw-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.aw-placeholder {
+  aspect-ratio: var(--w) / var(--h);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 12%;
+  text-align: center;
+}
+.aw-placeholder-label {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--faint);
+  opacity: 0.75;
+}
+.aw-placeholder-title {
+  font-weight: 300;
+  font-size: clamp(0.72rem, 1.1vw, 1rem);
+  line-height: 1.25;
+  color: var(--muted);
+}
+
+/* Caption — always visible, small, left-aligned. Series + availability fade
+   in on hover, below the metadata, never covering the artwork. */
+.wk-cap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.wk-cap-title {
+  font-size: 0.9rem;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+}
+.wk-cap-line {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.wk-cap-dim {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  color: var(--faint);
+}
+.wk-cap-hover {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0;
+  transform: translateY(-2px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  margin-top: 2px;
+}
+.wk-card:hover .wk-cap-hover,
+.wk-card:focus-visible .wk-cap-hover {
+  opacity: 1;
   transform: none;
 }
-.works-drawer-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 1.15rem;
-  border-bottom: 1px solid var(--hair);
-}
-.works-drawer-close {
-  font-size: 0.95rem;
+
+.wk-empty {
+  width: 100%;
+  text-align: center;
+  padding: 5rem 0;
   color: var(--muted);
-  transition: color 0.25s ease;
 }
-.works-drawer-close:hover {
-  color: var(--accent);
-}
-.works-drawer-scroll {
-  flex: 1;
-  overflow-y: auto;
-  padding: 1.15rem;
+
+/* Mobile — one work per row, occupying most of the width; captions below. */
+@media (max-width: 680px) {
+  .wk-row {
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(2.25rem, 7vw, 3rem);
+  }
+  .wk-card,
+  .wk-row[data-count="2"] .wk-card,
+  .wk-row[data-count="3"] .wk-card {
+    width: min(86vw, 430px);
+    max-width: min(86vw, 430px);
+  }
 }
 
 /* ---- Individual work view ---- */
@@ -1039,14 +962,17 @@ body {
   justify-content: center;
   min-width: 0;
 }
-.aw-frame--wd {
-  width: min(100%, calc(62vh * var(--w) / var(--h)));
-  padding: clamp(6px, 0.7vw, 13px);
-  background: var(--wood, linear-gradient(155deg, #c9b899, #c1ad8c));
-  box-shadow: 0 30px 64px -32px rgba(0, 0, 0, 0.5);
+/* Detail view — the same frameless plate, larger. Height-led so tall canvases
+   fit the viewport; width follows the true aspect ratio. */
+.wk-plate--lg {
+  width: min(100%, calc(66vh * var(--w) / var(--h)));
+  padding: clamp(5px, 0.5vw, 8px);
+  box-shadow: 0 0 0 0.5px var(--frame-edge),
+    0 34px 70px -34px rgba(24, 18, 6, 0.5);
 }
-.aw-frame--wd .aw-mat {
-  padding: 0;
+.dark .wk-plate--lg {
+  box-shadow: 0 0 0 0.5px var(--frame-edge),
+    0 34px 74px -34px rgba(0, 0, 0, 0.82);
 }
 .wd-info {
   flex: 0 0 auto;
