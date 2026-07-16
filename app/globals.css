@@ -1786,3 +1786,181 @@ body {
     animation: none !important;
   }
 }
+
+/* ===========================================================================
+   CV — professional Artist CV. Editorial, museum-quiet: a readable single
+   column with an aligned date/info grid, thin dividers, one subtle layered
+   shell line, and restrained teal accents. Empty sections are not rendered.
+=========================================================================== */
+.cv {
+  --cv-rise: 8px;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: clamp(4rem, 12vh, 8.5rem) clamp(1.5rem, 5vw, 3rem)
+    clamp(4.5rem, 12vh, 8rem);
+}
+.cv-head {
+  text-align: center;
+}
+.cv-name {
+  margin: 0;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.04;
+  font-size: clamp(1.9rem, 5vw, 3rem);
+  color: var(--fg);
+  text-wrap: balance;
+}
+.cv-sub {
+  margin-top: 0.9rem;
+  color: var(--faint);
+}
+.cv-shell-rule {
+  display: block;
+  width: min(220px, 55%);
+  height: 14px;
+  margin: 1.5rem auto 0;
+  overflow: visible;
+}
+.cv-shell-line {
+  fill: none;
+  stroke: color-mix(in srgb, var(--fg) 22%, transparent);
+  stroke-width: 1px;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+.cv-shell-line--accent {
+  stroke: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.cv-section {
+  margin-top: clamp(2.25rem, 4.5vw, 3.25rem);
+  padding-top: clamp(1.4rem, 3vw, 2rem);
+  border-top: 1px solid var(--hair);
+}
+.cv-section:first-of-type {
+  margin-top: clamp(2.75rem, 6vw, 4rem);
+}
+.cv-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0 0 clamp(1.25rem, 2.6vw, 1.8rem);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.cv-section-title::before {
+  content: "";
+  width: 16px;
+  height: 1px;
+  background: var(--accent);
+  flex: 0 0 auto;
+}
+.cv-rows {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.1rem, 2.2vw, 1.5rem);
+}
+.cv-row {
+  display: grid;
+  grid-template-columns: 9rem 1fr;
+  gap: 1.75rem;
+  align-items: baseline;
+}
+.cv-row-date {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.cv-row-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+  min-width: 0;
+}
+.cv-item-title {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.42;
+  color: var(--fg);
+}
+.cv-item-org {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.cv-item-loc {
+  font-size: 0.8rem;
+  color: var(--faint);
+}
+.cv-item-line {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--fg);
+}
+.cv-link {
+  color: var(--fg);
+  text-decoration: none;
+  border-bottom: 1px solid var(--hair);
+  transition: color var(--dur-base) var(--ease-organic),
+    border-color var(--dur-base) var(--ease-organic);
+}
+.cv-link:hover {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--hair));
+}
+.cv-download {
+  margin-top: clamp(3rem, 6vw, 4.5rem);
+  display: flex;
+  justify-content: center;
+}
+
+/* Tablet / mobile — stack date above info; keep hierarchy; no sideways scroll. */
+@media (max-width: 640px) {
+  .cv-row {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+  }
+  .cv-row-date {
+    font-size: 0.66rem;
+    letter-spacing: 0.12em;
+    color: var(--faint);
+  }
+}
+
+/* One gentle load reveal, then still. */
+.cv-head,
+.cv-section,
+.cv-download {
+  animation: cv-rise var(--dur-base) var(--ease-organic) both;
+}
+.cv-section {
+  animation-delay: 0.12s;
+}
+.cv-download {
+  animation-delay: 0.3s;
+}
+@keyframes cv-rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--cv-rise));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cv-head,
+  .cv-section,
+  .cv-download {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

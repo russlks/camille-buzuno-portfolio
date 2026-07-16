@@ -2,26 +2,11 @@ import type { Metadata } from "next";
 import SiteHeader from "../components/SiteHeader";
 import OysterNav from "../components/OysterNav";
 import DownloadPortfolio from "../components/DownloadPortfolio";
+import { CHANNELS } from "@/data/contact";
 
 export const metadata: Metadata = {
   title: "Contact — Camille Buzuno",
 };
-
-// Placeholder email / handle — confirm the real values.
-const CHANNELS: { name: string; value: string; href: string | null }[] = [
-  {
-    name: "Email",
-    value: "hello@camillebuzuno.com",
-    href: "mailto:hello@camillebuzuno.com",
-  },
-  {
-    name: "Instagram",
-    value: "@camillebuzuno",
-    href: "https://www.instagram.com/camillebuzuno/",
-  },
-  { name: "Behance", value: "In preparation", href: null },
-  { name: "LinkedIn", value: "In preparation", href: null },
-];
 
 export default function ContactPage() {
   return (
