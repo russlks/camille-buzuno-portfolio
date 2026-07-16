@@ -7,10 +7,15 @@
    `mediumFilters` array (never the displayed string), so one work can appear
    under several mediums.
 --------------------------------------------------------------------------- */
-import { ARTWORKS, type Artwork } from "@/data/artworks";
-import { SERIES_ORDER } from "@/data/series";
+import {
+  ARTWORKS,
+  type Artwork,
+  type Exhibition,
+  type Status,
+} from "@/data/artworks";
+import { SERIES_ORDER, SERIES_INFO } from "@/data/series";
 
-export type { Artwork };
+export type { Artwork, Exhibition, Status };
 export const WORKS = ARTWORKS;
 
 export type SizeCategory = "Small" | "Medium" | "Large" | "Monumental";
@@ -194,11 +199,16 @@ export function groupWorksBySeries(works: Artwork[]): SeriesGroup[] {
   return order
     .map((series) => works.filter((w) => w.series === series))
     .filter((group) => group.length > 0)
-    .map((group) => ({
-      series: group[0].series,
-      works: group,
-      yearLabel: yearSpan(group),
-      mediumLabel: mediumSummary(group),
-      count: group.length,
-    }));
+    .map((group) => {
+      const series = group[0].series;
+      const info = SERIES_INFO[series];
+      return {
+        series,
+        works: group,
+        // Author overrides win; otherwise derive from the works.
+        yearLabel: info?.yearLabel || yearSpan(group),
+        mediumLabel: info?.mediumLabel || mediumSummary(group),
+        count: group.length,
+      };
+    });
 }

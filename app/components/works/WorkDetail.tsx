@@ -1,6 +1,9 @@
 import Link from "next/link";
 import type { Artwork } from "../../lib/works";
+import { formatPrice, SHIPPING_NOTE } from "@/data/commerce";
 import ArtworkCanvas from "./ArtworkCanvas";
+import BuyButton from "../BuyButton";
+import ExhibitionList from "./ExhibitionList";
 
 function Meta({ label, value }: { label: string; value: string }) {
   return (
@@ -62,10 +65,32 @@ export default function WorkDetail({
             />
             <Meta label="Series" value={work.series} />
             <Meta label="Status" value={work.status} />
+            {work.status === "Available" ? (
+              <Meta
+                label="Price"
+                value={formatPrice(work.price, work.currency)}
+              />
+            ) : null}
           </dl>
+
+          {work.status === "Available" ? (
+            <div className="wd-buy">
+              <BuyButton buyLink={work.buyLink} />
+              {work.price != null ? (
+                <span className="wd-ship">{SHIPPING_NOTE}</span>
+              ) : null}
+            </div>
+          ) : null}
 
           {work.description ? (
             <p className="wd-description">{work.description}</p>
+          ) : null}
+
+          {work.exhibitions.length > 0 ? (
+            <section className="wd-exh">
+              <h2 className="wd-exh-title label-mono">Exhibitions</h2>
+              <ExhibitionList items={work.exhibitions} />
+            </section>
           ) : null}
         </aside>
       </div>

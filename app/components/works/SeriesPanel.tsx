@@ -1,20 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import type { Exhibition } from "../../lib/works";
+import ExhibitionList from "./ExhibitionList";
 
-/* An expandable series panel — the header of each body of work. The whole
-   surface is one button: clicking it smoothly reveals the series' year,
-   medium, count and description, and collapses again. The motion is the shared
-   site language (organic easing, slow membrane-like reveal, content rising and
-   un-blurring in) rather than a standard accordion. Fully keyboard operable
-   and reduced-motion aware (tokens flatten the timings). */
+/* A compact exhibition-label panel — the header of each body of work. The whole
+   surface is one button: clicking it smoothly reveals the series' metadata, its
+   project statement and (later) its exhibition history, and collapses again.
+   The motion is the shared site language (organic easing, soft membrane reveal,
+   content rising and un-blurring in) rather than a standard accordion. Empty
+   fields render nothing, so the public panel stays clean. */
 export default function SeriesPanel({
   series,
   label,
   yearLabel,
   mediumLabel,
   count,
-  description,
+  statement,
+  exhibitions = [],
   index,
   total,
 }: {
@@ -23,7 +26,8 @@ export default function SeriesPanel({
   yearLabel: string;
   mediumLabel: string;
   count: number;
-  description?: string;
+  statement?: string;
+  exhibitions?: Exhibition[];
   index: number;
   total: number;
 }) {
@@ -36,6 +40,8 @@ export default function SeriesPanel({
     total > 1
       ? `${String(index + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`
       : null;
+  const hasStatement = Boolean(statement && statement.trim());
+  const hasExhibitions = exhibitions.length > 0;
 
   return (
     <div className={`sp${open ? " is-open" : ""}`}>
@@ -55,12 +61,12 @@ export default function SeriesPanel({
           <span className="sp-meta">{meta}</span>
         </span>
         <span className="sp-arrow" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="22" height="22">
+          <svg viewBox="0 0 24 24" width="15" height="15">
             <path
-              d="M5 9l7 7 7-7"
+              d="M6 10l6 5 6-5"
               fill="none"
               stroke="currentColor"
-              strokeWidth="1.4"
+              strokeWidth="1.3"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
@@ -85,13 +91,20 @@ export default function SeriesPanel({
                 <dd>{countLabel}</dd>
               </div>
             </dl>
-            {description ? (
-              <p className="sp-desc">{description}</p>
-            ) : (
-              <p className="sp-desc sp-desc--empty">
-                A description of this series will appear here.
-              </p>
-            )}
+
+            {hasStatement ? (
+              <section className="sp-block">
+                <h3 className="sp-block-title">Project Statement</h3>
+                <p className="sp-statement">{statement}</p>
+              </section>
+            ) : null}
+
+            {hasExhibitions ? (
+              <section className="sp-block">
+                <h3 className="sp-block-title">Exhibitions</h3>
+                <ExhibitionList items={exhibitions} />
+              </section>
+            ) : null}
           </div>
         </div>
       </div>

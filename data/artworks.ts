@@ -20,6 +20,28 @@
    intact.
 --------------------------------------------------------------------------- */
 
+/* Availability. Only "Available" shows a price + Buy button; the rest read as
+   gallery states. Add new values here and they flow through the filters. */
+export type Status =
+  | "Available"
+  | "Sold"
+  | "Private collection"
+  | "On exhibition"
+  | "Not for sale";
+
+/* One exhibition an artwork (or series) has appeared in — structured, not a
+   paragraph, so it renders as a proper list. Only title, venue and year are
+   required; the rest are optional. */
+export type Exhibition = {
+  title: string;
+  venue: string;
+  city?: string;
+  country?: string;
+  year: number;
+  dates?: string; // e.g. "12 Mar – 4 May 2025"
+  link?: string;
+};
+
 export type Artwork = {
   id: string;
   slug: string;
@@ -31,7 +53,14 @@ export type Artwork = {
   displayedMedium: string;
   mediumFilters: string[];
   series: string;
-  status: string;
+  status: Status;
+  // Commerce — all editable. `price`/`buyLink` may be null until set; a null
+  // price shows "Price on request", a null buyLink keeps the Buy button visible
+  // but inert (never a broken link).
+  price: number | null;
+  currency: string;
+  buyLink: string | null;
+  exhibitions: Exhibition[];
   image: string;
   thumbnail: string;
   description: string;
@@ -52,6 +81,10 @@ export const ARTWORKS: Artwork[] = [
     mediumFilters: ["Oil"],
     series: "Early Works",
     status: "Available",
+    price: null,
+    currency: "EUR",
+    buyLink: null,
+    exhibitions: [],
     image: "/images/paintings/dismorphophobia.JPG",
     thumbnail: "/images/paintings/dismorphophobia.JPG",
     description: "",
@@ -70,6 +103,10 @@ export const ARTWORKS: Artwork[] = [
     mediumFilters: ["Oil", "Acrylic", "Mixed Media"],
     series: "Early Works",
     status: "Available",
+    price: null,
+    currency: "EUR",
+    buyLink: null,
+    exhibitions: [],
     image: "/images/paintings/the-lost-home.JPG",
     thumbnail: "/images/paintings/the-lost-home.JPG",
     description: "",
@@ -88,6 +125,10 @@ export const ARTWORKS: Artwork[] = [
     mediumFilters: ["Oil"],
     series: "Mermaids in Our Time",
     status: "Available",
+    price: null,
+    currency: "EUR",
+    buyLink: null,
+    exhibitions: [],
     image: "/images/paintings/mermaids-chapter-i.JPG",
     thumbnail: "/images/paintings/mermaids-chapter-i.JPG",
     description: "",
@@ -106,6 +147,10 @@ export const ARTWORKS: Artwork[] = [
     mediumFilters: ["Oil"],
     series: "Mermaids in Our Time",
     status: "Available",
+    price: null,
+    currency: "EUR",
+    buyLink: null,
+    exhibitions: [],
     image: "/images/paintings/mermaids-chapter-ii.JPG",
     thumbnail: "/images/paintings/mermaids-chapter-ii.JPG",
     description: "",
@@ -124,6 +169,10 @@ export const ARTWORKS: Artwork[] = [
     mediumFilters: ["Oil"],
     series: "Mermaids in Our Time",
     status: "Available",
+    price: null,
+    currency: "EUR",
+    buyLink: null,
+    exhibitions: [],
     image: "/images/paintings/mermaids-chapter-iv.JPG",
     thumbnail: "/images/paintings/mermaids-chapter-iv.JPG",
     description: "",
@@ -142,6 +191,10 @@ export const ARTWORKS: Artwork[] = [
     mediumFilters: ["Oil"],
     series: "Mermaids in Our Time",
     status: "Available",
+    price: null,
+    currency: "EUR",
+    buyLink: null,
+    exhibitions: [],
     image: "/images/paintings/mermaids-chapter-iii.JPG",
     thumbnail: "/images/paintings/mermaids-chapter-iii.JPG",
     description: "",

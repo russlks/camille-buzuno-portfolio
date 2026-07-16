@@ -126,7 +126,8 @@ export default function WorksArchive() {
             <SeriesPanel
               series={g.series}
               label={SERIES_INFO[g.series]?.label}
-              description={SERIES_INFO[g.series]?.description}
+              statement={SERIES_INFO[g.series]?.statement}
+              exhibitions={SERIES_INFO[g.series]?.exhibitions}
               yearLabel={g.yearLabel}
               mediumLabel={g.mediumLabel}
               count={g.count}

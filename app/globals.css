@@ -780,12 +780,17 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
-  text-decoration: none;
   width: clamp(
     var(--wk-min),
     calc(var(--cardw) * var(--gscale) * 1px),
     var(--wk-max)
   );
+}
+.wk-card-link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  text-decoration: none;
 }
 @media (min-width: 681px) {
   .wk-row[data-count="2"] .wk-card {
@@ -829,8 +834,8 @@ body {
 .dark .wk-plate .aw-canvas {
   box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.4) inset;
 }
-.wk-card:hover .wk-plate,
-.wk-card:focus-visible .wk-plate {
+.wk-card-link:hover .wk-plate,
+.wk-card-link:focus-visible .wk-plate {
   transform: translateY(-4px);
   box-shadow: 0 0 0 0.5px var(--frame-edge),
     0 30px 56px -30px rgba(24, 18, 6, 0.55);
@@ -1217,14 +1222,14 @@ body {
   margin-top: clamp(2rem, 4vw, 3rem);
 }
 .wk-series-section .wk-gallery {
-  margin-top: clamp(2.25rem, 4vw, 3.25rem);
+  margin-top: clamp(1.4rem, 2.8vw, 2.1rem);
 }
 
 /* The expandable panel — a soft translucent membrane. */
 .sp {
   --sp-bg: color-mix(in srgb, var(--fg) 3%, transparent);
   border: 1px solid var(--hair);
-  border-radius: 14px;
+  border-radius: 10px;
   background: var(--sp-bg);
   -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
@@ -1244,7 +1249,7 @@ body {
    organic, membrane-like swell rather than a rigid box. */
 .sp.is-open {
   border-color: color-mix(in srgb, var(--accent) 32%, var(--hair));
-  border-radius: 14px 14px 24px 20px;
+  border-radius: 10px 10px 16px 14px;
   background: color-mix(in srgb, var(--accent) 4%, var(--sp-bg));
   box-shadow: 0 34px 66px -44px rgba(6, 20, 20, 0.42);
 }
@@ -1256,9 +1261,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: clamp(1rem, 3vw, 2rem);
+  gap: clamp(0.8rem, 2vw, 1.4rem);
   width: 100%;
-  padding: clamp(1.15rem, 2.6vw, 1.9rem) clamp(1.2rem, 3vw, 2rem);
+  padding: clamp(0.85rem, 1.8vw, 1.25rem) clamp(1rem, 2.4vw, 1.5rem);
   background: none;
   border: 0;
   text-align: left;
@@ -1272,7 +1277,7 @@ body {
 .sp-head-text {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
+  gap: 0.3rem;
   min-width: 0;
 }
 .sp-eyebrow {
@@ -1284,9 +1289,9 @@ body {
 .sp-title {
   font-weight: 300;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
-  line-height: 1.02;
-  font-size: clamp(1.5rem, 4.4vw, 2.5rem);
+  letter-spacing: 0.03em;
+  line-height: 1.05;
+  font-size: clamp(1.2rem, 3.1vw, 1.8rem);
   color: var(--fg);
   text-wrap: balance;
   transition: color var(--dur-base) var(--ease-organic);
@@ -1303,9 +1308,12 @@ body {
 .sp-arrow {
   flex: 0 0 auto;
   display: flex;
-  color: var(--muted);
+  color: var(--faint);
   transition: transform var(--dur-base) var(--ease-organic),
     color var(--dur-base) var(--ease-organic);
+}
+.sp-head:hover .sp-arrow {
+  color: var(--muted);
 }
 .sp.is-open .sp-arrow {
   transform: rotate(180deg);
@@ -1343,9 +1351,9 @@ body {
 .sp-facts {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.35rem 2.75rem;
+  gap: 1rem 2.25rem;
   margin: 0;
-  padding-top: 1.3rem;
+  padding-top: 1rem;
   border-top: 1px solid var(--hair);
 }
 .sp-facts > div {
@@ -1416,4 +1424,176 @@ body {
 .dl-portfolio:hover .dl-arrow,
 .dl-portfolio:focus-visible .dl-arrow {
   transform: translateY(3px);
+}
+
+/* ===========================================================================
+   Series statement / exhibitions, artwork commerce line, detail exhibitions.
+   Gallery-quiet: teal used sparingly, prices understated, no shop chrome.
+=========================================================================== */
+
+/* Series panel — Project Statement + Exhibitions blocks (only when populated) */
+.sp-block {
+  margin-top: 1.25rem;
+}
+.sp-block-title {
+  margin: 0 0 0.7rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.sp-statement {
+  margin: 0;
+  max-width: 60ch;
+  font-weight: 300;
+  line-height: 1.72;
+  font-size: 0.98rem;
+  color: var(--muted);
+  white-space: pre-line;
+}
+
+/* Exhibition history — shared by the series panel and the detail view */
+.exh-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.exh-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  text-decoration: none;
+  color: inherit;
+}
+.exh-entry--link {
+  transition: color var(--dur-base) var(--ease-organic);
+}
+.exh-entry--link:hover {
+  color: var(--accent);
+}
+.exh-title {
+  font-size: 0.92rem;
+  font-weight: 300;
+  color: var(--fg);
+}
+.exh-title::before {
+  content: "\201C";
+}
+.exh-title::after {
+  content: "\201D";
+}
+.exh-place {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.exh-year {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Artwork commerce line (under each card) */
+.wk-commerce {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+.wk-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.wk-status::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.55;
+}
+.wk-status[data-status="available"] {
+  color: var(--accent);
+}
+.wk-status[data-status="private-collection"],
+.wk-status[data-status="on-exhibition"],
+.wk-status[data-status="not-for-sale"] {
+  color: var(--faint);
+}
+.wk-price {
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+.wk-ship {
+  font-size: 0.62rem;
+  line-height: 1.4;
+  color: var(--faint);
+}
+
+/* Buy — a restrained teal pill, not a shop button. Works as <a> or inert
+   <button>. */
+.wk-buy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.3rem;
+  padding: 0.5rem 1.15rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-decoration: none;
+  background: none;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--hair));
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background var(--dur-base) var(--ease-organic),
+    border-color var(--dur-base) var(--ease-organic),
+    color var(--dur-base) var(--ease-organic);
+}
+.wk-buy:hover,
+.wk-buy:focus-visible {
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--hair));
+  outline: none;
+}
+
+/* Detail view — price/buy block + exhibitions section */
+.wd-buy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+.wd-buy .wk-buy {
+  margin-top: 0;
+  font-size: 0.64rem;
+  padding: 0.6rem 1.5rem;
+}
+.wd-ship {
+  font-size: 0.66rem;
+  color: var(--faint);
+}
+.wd-exh {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--hair);
+}
+.wd-exh-title {
+  margin: 0 0 1.1rem;
 }
