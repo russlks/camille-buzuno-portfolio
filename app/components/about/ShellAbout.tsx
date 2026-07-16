@@ -78,6 +78,17 @@ export default function ShellAbout() {
 
   return (
     <main className="about">
+      {/* Opening image — the artist introduced before the words. Large and
+          editorial, like the first spread of a magazine article. */}
+      <figure className="about-hero">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/portrait/mytale-hero.jpg"
+          alt="Camille Buzuno"
+          className="about-hero-img"
+        />
+      </figure>
+
       <div className="about-inner">
         <div className="about-shell" aria-hidden="true">
           <svg

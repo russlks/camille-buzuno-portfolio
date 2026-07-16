@@ -68,6 +68,20 @@ export default function CvPage() {
     <div className="relative min-h-screen text-fg">
       <SiteHeader />
 
+      {/* Atmospheric mirror reflection — the right half of a portrait, on the
+          right, behind all CV content. Monochrome, softened and dissolving
+          leftward into the page so it adds quiet personality without ever
+          touching readability. Hidden on phones. See .cv-portrait in
+          globals.css. */}
+      <div aria-hidden="true" className="cv-portrait">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/portrait/cv-reflection.jpg"
+          alt=""
+          className="cv-portrait-img"
+        />
+      </div>
+
       <main className="cv">
         <header className="cv-head">
           <h1 className="cv-name">Kamilya Buzunova</h1>
