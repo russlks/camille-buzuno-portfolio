@@ -7,11 +7,14 @@ import {
   SERIES,
   emptyFilters,
   filterWorks,
+  groupWorksBySeries,
   type Filters,
 } from "../../lib/works";
+import { SERIES_INFO } from "@/data/series";
 import { primeSound } from "../../lib/sound";
 import WorksFilters from "./WorksFilters";
 import Gallery from "./Gallery";
+import SeriesPanel from "./SeriesPanel";
 
 type ArrayFacet = "statuses" | "mediums" | "sizes";
 
@@ -30,6 +33,7 @@ export default function WorksArchive() {
   }, []);
 
   const filtered = useMemo(() => filterWorks(WORKS, filters), [filters]);
+  const groups = useMemo(() => groupWorksBySeries(filtered), [filtered]);
 
   const activeSeries = filters.series[0] ?? "all";
   const selectSeries = (key: string) =>
@@ -112,7 +116,27 @@ export default function WorksArchive() {
         total={WORKS.length}
       />
 
-      <Gallery works={filtered} />
+      {filtered.length === 0 ? (
+        <p className="wk-empty label-mono">
+          No works match the current filters.
+        </p>
+      ) : (
+        groups.map((g, i) => (
+          <section className="wk-series-section" key={g.series}>
+            <SeriesPanel
+              series={g.series}
+              label={SERIES_INFO[g.series]?.label}
+              description={SERIES_INFO[g.series]?.description}
+              yearLabel={g.yearLabel}
+              mediumLabel={g.mediumLabel}
+              count={g.count}
+              index={i}
+              total={groups.length}
+            />
+            <Gallery works={g.works} />
+          </section>
+        ))
+      )}
     </div>
   );
 }

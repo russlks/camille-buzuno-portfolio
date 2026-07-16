@@ -4,6 +4,35 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ---------------------------------------------------------------------------
+   Shared motion language — one easing, timing and reveal system reused across
+   the whole site (series panels, navigation, buttons, hovers, reveals) so the
+   interactions read as one living visual system rather than separate UI.
+   Inspired by water / oyster / pearl: slow, soft, organically elastic — never
+   bouncy, playful or gamey. The organic curve is the site's existing curve,
+   now formalised as a token so every surface shares it.
+--------------------------------------------------------------------------- */
+:root {
+  --ease-organic: cubic-bezier(0.16, 0.72, 0.24, 1);
+  --ease-membrane: cubic-bezier(0.34, 0.02, 0.16, 1);
+  --dur-quick: 0.42s;
+  --dur-base: 0.66s;
+  --dur-slow: 0.92s;
+  --reveal-delay: 0.14s;
+  --reveal-rise: 10px;
+  --blur-in: 5px;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-quick: 0.001s;
+    --dur-base: 0.001s;
+    --dur-slow: 0.001s;
+    --reveal-delay: 0s;
+    --reveal-rise: 0px;
+    --blur-in: 0px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
    Design tokens — Camille Buzuno
    Two worlds: LIGHT (white) and DEPTH (near-black). Cold teal accent.
 --------------------------------------------------------------------------- */
@@ -1174,4 +1203,217 @@ body {
     opacity: 1;
     transform: none;
   }
+}
+
+/* ===========================================================================
+   Series panels + grouped sections + portfolio download.
+   Grouped "chapters" of the practice, each opened by an expandable panel whose
+   motion is the shared site language (see the --ease-organic / --dur-* tokens).
+=========================================================================== */
+.wk-series-section {
+  margin-top: clamp(3.25rem, 7vw, 5.5rem);
+}
+.wk-series-section:first-of-type {
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+.wk-series-section .wk-gallery {
+  margin-top: clamp(2.25rem, 4vw, 3.25rem);
+}
+
+/* The expandable panel — a soft translucent membrane. */
+.sp {
+  --sp-bg: color-mix(in srgb, var(--fg) 3%, transparent);
+  border: 1px solid var(--hair);
+  border-radius: 14px;
+  background: var(--sp-bg);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  overflow: hidden;
+  transition: border-radius var(--dur-slow) var(--ease-membrane),
+    border-color var(--dur-base) var(--ease-organic),
+    box-shadow var(--dur-slow) var(--ease-organic),
+    background var(--dur-base) var(--ease-organic);
+}
+.dark .sp {
+  --sp-bg: color-mix(in srgb, var(--fg) 5%, transparent);
+}
+.sp:hover {
+  border-color: color-mix(in srgb, var(--accent) 20%, var(--hair));
+}
+/* Open: the lower edge softly stretches and the bottom corners deform — an
+   organic, membrane-like swell rather than a rigid box. */
+.sp.is-open {
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--hair));
+  border-radius: 14px 14px 24px 20px;
+  background: color-mix(in srgb, var(--accent) 4%, var(--sp-bg));
+  box-shadow: 0 34px 66px -44px rgba(6, 20, 20, 0.42);
+}
+.dark .sp.is-open {
+  box-shadow: 0 34px 70px -44px rgba(0, 0, 0, 0.7);
+}
+
+.sp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(1rem, 3vw, 2rem);
+  width: 100%;
+  padding: clamp(1.15rem, 2.6vw, 1.9rem) clamp(1.2rem, 3vw, 2rem);
+  background: none;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  color: var(--fg);
+}
+.sp-head:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.sp-head-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  min-width: 0;
+}
+.sp-eyebrow {
+  color: var(--faint);
+}
+.sp-seq {
+  color: color-mix(in srgb, var(--accent) 70%, var(--faint));
+}
+.sp-title {
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.02;
+  font-size: clamp(1.5rem, 4.4vw, 2.5rem);
+  color: var(--fg);
+  text-wrap: balance;
+  transition: color var(--dur-base) var(--ease-organic);
+}
+.sp-head:hover .sp-title {
+  color: color-mix(in srgb, var(--accent) 55%, var(--fg));
+}
+.sp-meta {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+.sp-arrow {
+  flex: 0 0 auto;
+  display: flex;
+  color: var(--muted);
+  transition: transform var(--dur-base) var(--ease-organic),
+    color var(--dur-base) var(--ease-organic);
+}
+.sp.is-open .sp-arrow {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+
+/* The reveal — animate height via 0fr→1fr so no magic numbers are needed. */
+.sp-reveal {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur-slow) var(--ease-membrane);
+}
+.sp.is-open .sp-reveal {
+  grid-template-rows: 1fr;
+}
+.sp-reveal-clip {
+  overflow: hidden;
+  min-height: 0;
+}
+/* Content rises and un-blurs in, slightly delayed behind the swell. */
+.sp-reveal-inner {
+  padding: 0 clamp(1.2rem, 3vw, 2rem) clamp(1.35rem, 3vw, 1.95rem);
+  opacity: 0;
+  transform: translateY(var(--reveal-rise));
+  filter: blur(var(--blur-in));
+  transition: opacity var(--dur-base) var(--ease-organic) var(--reveal-delay),
+    transform var(--dur-base) var(--ease-organic) var(--reveal-delay),
+    filter var(--dur-base) var(--ease-organic) var(--reveal-delay);
+}
+.sp.is-open .sp-reveal-inner {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+.sp-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.35rem 2.75rem;
+  margin: 0;
+  padding-top: 1.3rem;
+  border-top: 1px solid var(--hair);
+}
+.sp-facts > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.sp-facts dt {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.sp-facts dd {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: var(--fg);
+}
+.sp-desc {
+  margin: 1.25rem 0 0;
+  max-width: 60ch;
+  font-weight: 300;
+  line-height: 1.72;
+  font-size: 0.98rem;
+  color: var(--muted);
+}
+.sp-desc--empty {
+  color: var(--faint);
+  font-style: italic;
+}
+
+/* ---- Portfolio download button ---- */
+.contact-actions {
+  margin-top: clamp(2.25rem, 5vw, 3.25rem);
+  display: flex;
+  justify-content: center;
+}
+.dl-portfolio {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg);
+  text-decoration: none;
+  padding: 0.85rem 1.5rem;
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--fg) 2.5%, transparent);
+  transition: border-color var(--dur-base) var(--ease-organic),
+    color var(--dur-base) var(--ease-organic),
+    background var(--dur-base) var(--ease-organic);
+}
+.dl-portfolio:hover,
+.dl-portfolio:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 42%, var(--hair));
+  color: var(--accent);
+  background: var(--accent-soft);
+  outline: none;
+}
+.dl-arrow {
+  transition: transform var(--dur-base) var(--ease-organic);
+}
+.dl-portfolio:hover .dl-arrow,
+.dl-portfolio:focus-visible .dl-arrow {
+  transform: translateY(3px);
 }

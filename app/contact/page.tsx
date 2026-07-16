@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import SiteHeader from "../components/SiteHeader";
 import OysterNav from "../components/OysterNav";
+import DownloadPortfolio from "../components/DownloadPortfolio";
 
 export const metadata: Metadata = {
   title: "Contact — Camille Buzuno",
@@ -68,6 +69,10 @@ export default function ContactPage() {
               );
             })}
           </ul>
+
+          <div className="contact-actions">
+            <DownloadPortfolio />
+          </div>
         </div>
 
         <p className="contact-closing">

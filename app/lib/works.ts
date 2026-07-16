@@ -8,6 +8,7 @@
    under several mediums.
 --------------------------------------------------------------------------- */
 import { ARTWORKS, type Artwork } from "@/data/artworks";
+import { SERIES_ORDER } from "@/data/series";
 
 export type { Artwork };
 export const WORKS = ARTWORKS;
@@ -155,4 +156,49 @@ export function curateRows(works: Artwork[]): Artwork[][] {
     r += 1;
   }
   return rows;
+}
+
+/* ---------------------------------------------------------------------------
+   Series grouping — split the (filtered) works into their series, each with a
+   concise metadata line (year span · medium · count) for the series panel.
+   Groups follow SERIES_ORDER, then first-appearance for anything unlisted, so
+   the page reads as consecutive chapters of the practice rather than one list.
+--------------------------------------------------------------------------- */
+export type SeriesGroup = {
+  series: string;
+  works: Artwork[];
+  yearLabel: string;
+  mediumLabel: string;
+  count: number;
+};
+
+function yearSpan(works: Artwork[]): string {
+  const years = works.map((w) => w.year);
+  const min = Math.min(...years);
+  const max = Math.max(...years);
+  return min === max ? `${min}` : `${min}–${max}`;
+}
+
+function mediumSummary(works: Artwork[]): string {
+  const displayed = uniqueInOrder(works.map((w) => w.displayedMedium));
+  if (displayed.length === 1) return displayed[0];
+  // Mixed media across the group — summarise by the medium facets instead.
+  return uniqueInOrder(works.flatMap((w) => w.mediumFilters)).join(" · ");
+}
+
+export function groupWorksBySeries(works: Artwork[]): SeriesGroup[] {
+  const order = uniqueInOrder([
+    ...SERIES_ORDER,
+    ...works.map((w) => w.series),
+  ]);
+  return order
+    .map((series) => works.filter((w) => w.series === series))
+    .filter((group) => group.length > 0)
+    .map((group) => ({
+      series: group[0].series,
+      works: group,
+      yearLabel: yearSpan(group),
+      mediumLabel: mediumSummary(group),
+      count: group.length,
+    }));
 }
