@@ -1597,3 +1597,192 @@ body {
 .wd-exh-title {
   margin: 0 0 1.1rem;
 }
+
+/* ===========================================================================
+   About — the interior of the shell. The oyster growth-rings become a large
+   architectural frame around a clean, readable text column. Thin gray/white
+   contours with two subtle teal accent layers; unfold-on-load, restrained
+   breathing and gentle scroll parallax, all in the shared motion language.
+=========================================================================== */
+.about {
+  --rise-base: 0.55s;
+  --rise-step: 0.12s;
+  --unfold-base: 0.15s;
+  --unfold-step: 0.09s;
+  position: relative;
+  overflow-x: clip; /* never scroll sideways */
+  padding: clamp(4rem, 12vh, 9rem) 0 clamp(4.5rem, 13vh, 9rem);
+}
+.about-inner {
+  position: relative;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 7vw, 5rem) clamp(1.5rem, 5vw, 3rem);
+}
+
+/* The shell frame — covers the content box, cropping as needed so it always
+   envelops the text (more layers visible on wide screens, a simpler slice on
+   narrow ones). Inert to the pointer. */
+.about-shell {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.about-shell-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.about-breathe {
+  transform-box: view-box;
+  transform-origin: var(--cx) var(--cy);
+  animation: about-breathe 15s ease-in-out 2s infinite;
+}
+.about-parallax {
+  will-change: transform;
+}
+.about-ring {
+  fill: none;
+  stroke: color-mix(in srgb, var(--fg) 17%, transparent);
+  stroke-width: 1.1px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transform-box: view-box;
+  transform-origin: var(--cx) var(--cy);
+  opacity: 0;
+  animation: about-unfold var(--dur-slow) var(--ease-organic)
+    calc(var(--unfold-base) + var(--i) * var(--unfold-step)) both;
+}
+.about-ring--accent {
+  stroke: color-mix(in srgb, var(--accent) 52%, transparent);
+}
+/* Denser inner layers drop away on small screens to simplify the shape. */
+@media (max-width: 700px) {
+  .about-ring--dense {
+    display: none;
+  }
+}
+
+@keyframes about-unfold {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+/* Extremely restrained breathing — almost imperceptible. */
+@keyframes about-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.006);
+  }
+}
+
+/* Text column — centred, readable, sitting inside the frame with a soft halo
+   so it stays legible over the contour lines. */
+.about-content {
+  position: relative;
+  z-index: 1;
+  max-width: 34rem;
+  margin: 0 auto;
+  text-align: center;
+}
+.about-content::before {
+  content: "";
+  position: absolute;
+  inset: -8% -14%;
+  z-index: -1;
+  background: radial-gradient(
+    115% 88% at 50% 42%,
+    color-mix(in srgb, var(--bg) 82%, transparent) 0%,
+    color-mix(in srgb, var(--bg) 52%, transparent) 52%,
+    transparent 78%
+  );
+  pointer-events: none;
+}
+.about-eyebrow {
+  color: var(--faint);
+  opacity: 0;
+  animation: about-rise var(--dur-base) var(--ease-organic) var(--rise-base) both;
+}
+.about-name {
+  margin-top: 1.1rem;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  font-size: clamp(2rem, 5.2vw, 3.2rem);
+  color: var(--fg);
+  text-wrap: balance;
+  opacity: 0;
+  animation: about-rise var(--dur-base) var(--ease-organic)
+    calc(var(--rise-base) + 0.1s) both;
+}
+.about-alt {
+  margin-top: 0.55rem;
+  font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+  font-weight: 300;
+  color: var(--muted);
+  opacity: 0;
+  animation: about-rise var(--dur-base) var(--ease-organic)
+    calc(var(--rise-base) + 0.2s) both;
+}
+.about-bio {
+  margin-top: clamp(2.25rem, 5vw, 3.25rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  text-align: left;
+}
+.about-para {
+  margin: 0;
+  font-weight: 300;
+  font-size: clamp(1rem, 1.35vw, 1.1rem);
+  line-height: 1.82;
+  color: var(--fg);
+  opacity: 0;
+  animation: about-rise var(--dur-base) var(--ease-organic)
+    calc(var(--rise-base) + 0.4s + var(--i) * var(--rise-step)) both;
+}
+.about-para:nth-child(n + 2) {
+  color: var(--muted);
+}
+
+@keyframes about-rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--reveal-rise));
+    filter: blur(var(--blur-in));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No motion — show everything in its final, static state (never animate,
+     never leave content hidden). */
+  .about-eyebrow,
+  .about-name,
+  .about-alt,
+  .about-para,
+  .about-ring {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  .about-breathe {
+    animation: none !important;
+  }
+}
