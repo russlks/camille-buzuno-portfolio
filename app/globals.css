@@ -1979,7 +1979,7 @@ body {
   pointer-events: none;
 }
 .portrait-bg__img {
-  --portrait-op: 0.1;
+  --portrait-op: 0.8; /* TEMPORARY — raised for composition review (was 0.1) */
   position: absolute;
   left: 0;
   top: 0;
@@ -2007,7 +2007,7 @@ body {
   animation: portrait-emerge 3.6s ease-out 0.6s both;
 }
 .dark .portrait-bg__img {
-  --portrait-op: 0.2;
+  --portrait-op: 0.8; /* TEMPORARY — raised for composition review (was 0.2) */
   filter: blur(4px) saturate(0.5) contrast(0.92) brightness(0.95);
 }
 
