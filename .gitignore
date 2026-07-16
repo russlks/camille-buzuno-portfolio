@@ -42,3 +42,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Heavy camera original for the Artist Statement portrait (optimized portrait-bg.jpg is committed)
+public/images/portrait/DSCF1296.JPG

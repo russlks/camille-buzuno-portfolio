@@ -18,6 +18,17 @@ export default function ArtistStatementPage() {
     <div className="relative min-h-screen text-fg">
       <SiteHeader />
 
+      {/* Portrait — a quiet atmospheric presence on the left, sitting behind
+          everything (below the mermaid and the text). It emerges slowly on
+          load, is heavily softened (low opacity, blur, desaturated, low
+          contrast) and dissolves rightward into the page via a soft gradient
+          mask — never a hero image. Hidden on phones for readability. See
+          .portrait-bg in globals.css. */}
+      <div aria-hidden="true" className="portrait-bg">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/images/portrait/portrait-bg.jpg" alt="" className="portrait-bg__img" />
+      </div>
+
       {/* Vitruvian Mermaid — decorative background only. A teal duotone
           engraving set very low, the figure centered behind the text with the
           frame bleeding past the edges, and a slow breathing drift. Inert to
