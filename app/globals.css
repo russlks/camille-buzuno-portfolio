@@ -2183,3 +2183,169 @@ body {
     opacity: var(--portrait-op) !important;
   }
 }
+
+/* ===========================================================================
+   Next-chapter transition — a reusable "turn to the next chapter" interaction
+   between routes (see NextChapterTransition.tsx). A bottom sheet reveals on the
+   first gesture at the page bottom; a soft cover crossfades to the next route
+   on the second. Shell/membrane motion, shared organic easing.
+=========================================================================== */
+.nct {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+}
+
+/* Bottom sheet — the "one more gesture" prompt, with a soft membrane top edge. */
+.nct-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 92;
+  pointer-events: none;
+  padding: clamp(2rem, 6vw, 3.4rem) 1.5rem clamp(2.25rem, 6vw, 3.4rem);
+  text-align: center;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(1.04);
+  backdrop-filter: blur(14px) saturate(1.04);
+  border-top: 1px solid var(--hair);
+  border-radius: 50% 50% 0 0 / 26px 26px 0 0;
+  box-shadow: 0 -30px 60px -44px rgba(0, 0, 0, 0.4);
+  transform: translateY(102%);
+  transition: transform var(--dur-slow) var(--ease-membrane),
+    opacity var(--dur-base) var(--ease-organic),
+    border-radius var(--dur-slow) var(--ease-membrane);
+}
+.nct[data-phase="armed"] .nct-sheet {
+  transform: translateY(0);
+  pointer-events: auto;
+  border-radius: 50% 50% 0 0 / 34px 34px 0 0;
+}
+.nct[data-phase="leaving"] .nct-sheet {
+  transform: translateY(40%);
+  opacity: 0;
+  transition: transform var(--dur-base) var(--ease-organic),
+    opacity var(--dur-base) var(--ease-organic);
+}
+.nct-sheet-inner {
+  max-width: 40rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(12px);
+  filter: blur(3px);
+  transition: opacity var(--dur-base) var(--ease-organic) 0.08s,
+    transform var(--dur-base) var(--ease-organic) 0.08s,
+    filter var(--dur-base) var(--ease-organic) 0.08s;
+}
+.nct[data-phase="armed"] .nct-sheet-inner {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+.nct-eyebrow {
+  color: var(--faint);
+}
+.nct-title {
+  margin: 0.5rem 0 0;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1.05;
+  font-size: clamp(1.5rem, 4.6vw, 2.6rem);
+  color: var(--fg);
+  text-wrap: balance;
+}
+.nct-hint {
+  margin: 0.95rem 0 0;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.nct-arrow {
+  display: inline-block;
+  animation: nct-bob 1.9s var(--ease-organic) infinite;
+}
+@keyframes nct-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+.nct-open {
+  margin-top: 1.4rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-decoration: none;
+  padding-bottom: 3px;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 38%, var(--hair));
+  transition: color var(--dur-base) var(--ease-organic),
+    border-color var(--dur-base) var(--ease-organic);
+}
+.nct-open:hover,
+.nct-open:focus-visible {
+  color: color-mix(in srgb, var(--accent) 75%, var(--fg));
+  border-color: var(--accent);
+  outline: none;
+}
+
+/* Chapter cover — crossfades between the two routes. */
+.nct-cover {
+  position: fixed;
+  inset: 0;
+  z-index: 96;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-organic);
+}
+.nct-cover.is-in {
+  opacity: 1;
+}
+.nct-cover-title {
+  padding: 0 1.5rem;
+  text-align: center;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: clamp(1.6rem, 5vw, 3.4rem);
+  color: var(--fg);
+  text-wrap: balance;
+  opacity: 0;
+  transform: translateY(10px) scale(0.99);
+  filter: blur(4px);
+  transition: opacity var(--dur-slow) var(--ease-organic),
+    transform var(--dur-slow) var(--ease-organic),
+    filter var(--dur-slow) var(--ease-organic);
+}
+.nct-cover.is-in .nct-cover-title {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nct-arrow {
+    animation: none;
+  }
+  .nct-sheet-inner {
+    filter: none;
+  }
+}

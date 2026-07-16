@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import SiteHeader from "../components/SiteHeader";
 import DownloadPortfolio from "../components/DownloadPortfolio";
+import NextChapterTransition from "../components/NextChapterTransition";
 import { CHANNELS } from "@/data/contact";
 import {
   EDUCATION,
@@ -247,6 +248,11 @@ export default function CvPage() {
           <DownloadPortfolio href={CV_PDF} label="Download CV" />
         </div>
       </main>
+
+      <NextChapterTransition
+        chapter="Curriculum Vitae"
+        next={{ href: "/exhibitions", label: "Exhibitions" }}
+      />
     </div>
   );
 }
