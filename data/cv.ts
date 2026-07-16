@@ -73,7 +73,17 @@ export type CvExhibition = {
   link?: string;
 };
 
-export const SELECTED_EXHIBITIONS: CvExhibition[] = [];
+// Add exhibitions here in any order — the CV sorts them newest-first
+// automatically, so future entries appear above older ones.
+export const SELECTED_EXHIBITIONS: CvExhibition[] = [
+  {
+    year: 2025,
+    title: "0.00 Exhibition",
+    venue: "Group Exhibition",
+    city: "Prague",
+    country: "Czech Republic",
+  },
+];
 
 // Collections — plain lines, e.g. "Private collection, Prague".
 export const PRIVATE_COLLECTIONS: string[] = [];

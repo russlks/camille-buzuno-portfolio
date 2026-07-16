@@ -61,6 +61,10 @@ function DatedEntry({ e }: { e: CvEntry }) {
 
 export default function CvPage() {
   const contact = CHANNELS.filter((c) => c.href);
+  // Reverse chronological — newest exhibitions first, regardless of data order.
+  const exhibitions = [...SELECTED_EXHIBITIONS].sort(
+    (a, b) => Number(b.year) - Number(a.year)
+  );
   const hasCollections =
     PRIVATE_COLLECTIONS.length > 0 || INSTITUTIONAL_COLLECTIONS.length > 0;
 
@@ -117,9 +121,9 @@ export default function CvPage() {
           ))}
         </Section>
 
-        {SELECTED_EXHIBITIONS.length > 0 ? (
+        {exhibitions.length > 0 ? (
           <Section title="Selected Exhibitions">
-            {SELECTED_EXHIBITIONS.map((x, i) => {
+            {exhibitions.map((x, i) => {
               const place = [x.venue, x.city, x.country]
                 .filter(Boolean)
                 .join(", ");
