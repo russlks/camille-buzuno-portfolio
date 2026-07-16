@@ -2047,24 +2047,76 @@ body {
 }
 
 /* ===========================================================================
-   About hero — the opening editorial image (mytale), before the biography.
+   About closing chapter — the photograph as the final page of the catalogue.
+   Full-bleed, no frame/caption; the name is set directly on the image, which
+   emerges from the page at the top and carries a whisper of shading only where
+   the type sits.
 =========================================================================== */
-.about-hero {
+.about {
+  padding-bottom: 0; /* the closing image concludes the page */
+}
+.about-ending {
   position: relative;
   z-index: 1;
-  max-width: 1000px;
-  margin: 0 auto clamp(2.5rem, 6vw, 4.5rem);
-  padding: 0 clamp(1.5rem, 5vw, 3rem);
+  width: 100%;
+  margin-top: clamp(4rem, 10vh, 8rem);
+  overflow: hidden;
+  isolation: isolate;
 }
-.about-hero-img {
+.about-ending-img {
   display: block;
   width: 100%;
   height: auto;
-  box-shadow: 0 30px 70px -40px rgba(6, 20, 20, 0.5);
-  animation: about-rise var(--dur-slow) var(--ease-organic) 0.1s both;
+  /* Slightly reduced contrast + saturation. Not blurred. */
+  filter: contrast(0.92) saturate(0.85);
 }
-.dark .about-hero-img {
-  box-shadow: 0 34px 74px -40px rgba(0, 0, 0, 0.8);
+/* Theme-aware wash: the image emerges from the page colour at the top
+   (cinematic transition from the biography), and a soft shading gathers at the
+   bottom only where the name sits so the white type stays readable. */
+.about-ending-veil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+      to bottom,
+      var(--bg) 0%,
+      color-mix(in srgb, var(--bg) 35%, transparent) 11%,
+      transparent 26%
+    ),
+    linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.42) 0%,
+      rgba(0, 0, 0, 0.12) 22%,
+      transparent 42%
+    );
+}
+.about-ending-cap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(1.75rem, 6vw, 4.5rem);
+  z-index: 1;
+  text-align: center;
+  padding: 0 1.5rem;
+}
+.about-ending-name {
+  margin: 0;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  font-size: clamp(1.5rem, 5.6vw, 4rem);
+  color: #fff;
+  text-wrap: balance;
+  text-shadow: 0 2px 40px rgba(0, 0, 0, 0.45);
+}
+.about-ending-role {
+  margin: clamp(0.7rem, 1.6vw, 1.15rem) 0 0;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: clamp(0.6rem, 1vw, 0.76rem);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.82);
 }
 
 /* ===========================================================================
@@ -2082,7 +2134,7 @@ body {
   pointer-events: none;
 }
 .cv-portrait-img {
-  --portrait-op: 0.24;
+  --portrait-op: 0.4;
   position: absolute;
   right: 0;
   top: 0;
@@ -2091,7 +2143,7 @@ body {
   object-fit: cover;
   object-position: 44% 34%; /* frame the reflected face */
   opacity: var(--portrait-op);
-  filter: grayscale(1) saturate(0) contrast(0.85) brightness(1.04) blur(3px);
+  filter: grayscale(1) saturate(0) contrast(0.98) brightness(1.03) blur(2px);
   /* Feathered dissolve leftward into the page (and softly top/bottom); no hard
      edge where it meets the background. */
   -webkit-mask-image: linear-gradient(
@@ -2108,16 +2160,16 @@ body {
   animation: portrait-emerge 3.6s ease-out 0.6s both;
 }
 .dark .cv-portrait-img {
-  --portrait-op: 0.26;
-  filter: grayscale(1) saturate(0) contrast(0.95) brightness(0.92) blur(3px);
+  --portrait-op: 0.4;
+  filter: grayscale(1) saturate(0) contrast(1.06) brightness(0.94) blur(2px);
 }
 @media (max-width: 1024px) {
   .cv-portrait-img {
-    --portrait-op: 0.16;
+    --portrait-op: 0.28;
     width: 30vw;
   }
   .dark .cv-portrait-img {
-    --portrait-op: 0.18;
+    --portrait-op: 0.3;
   }
 }
 @media (max-width: 640px) {
@@ -2126,15 +2178,8 @@ body {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .about-hero-img,
   .cv-portrait-img {
     animation: none !important;
-    opacity: var(--portrait-op, 1) !important;
-    transform: none !important;
-    filter: grayscale(1) saturate(0) contrast(0.85) brightness(1.04) blur(3px);
-  }
-  .about-hero-img {
-    filter: none;
-    opacity: 1 !important;
+    opacity: var(--portrait-op) !important;
   }
 }

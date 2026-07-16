@@ -78,17 +78,6 @@ export default function ShellAbout() {
 
   return (
     <main className="about">
-      {/* Opening image — the artist introduced before the words. Large and
-          editorial, like the first spread of a magazine article. */}
-      <figure className="about-hero">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/images/portrait/mytale-hero.jpg"
-          alt="Camille Buzuno"
-          className="about-hero-img"
-        />
-      </figure>
-
       <div className="about-inner">
         <div className="about-shell" aria-hidden="true">
           <svg
@@ -131,6 +120,24 @@ export default function ShellAbout() {
           </div>
         </article>
       </div>
+
+      {/* Closing chapter — the photograph as the final page of the catalogue.
+          Full-bleed, no frame or caption; the name is set directly over the
+          image, which emerges from the page above and carries a whisper of
+          shading only where the type sits. */}
+      <section className="about-ending" aria-label="Camille Buzuno — Painter, Creative Director">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/portrait/mytale-hero.jpg"
+          alt="Camille Buzuno"
+          className="about-ending-img"
+        />
+        <div className="about-ending-veil" aria-hidden="true" />
+        <div className="about-ending-cap">
+          <p className="about-ending-name">Camille Buzuno</p>
+          <p className="about-ending-role">Painter · Creative Director</p>
+        </div>
+      </section>
     </main>
   );
 }
