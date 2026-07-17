@@ -1958,7 +1958,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .cv-head,
   .cv-section,
-  .cv-download {
+  .cv-download,
+  .exhib-head {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
@@ -2348,4 +2349,48 @@ body {
   .nct-sheet-inner {
     filter: none;
   }
+}
+
+/* ===========================================================================
+   Exhibitions — the growing archive. Reuses the CV's editorial row system
+   (thin dividers, date/info grid, teal ticks) beneath a titled intro.
+=========================================================================== */
+.exhib {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: clamp(4rem, 12vh, 8.5rem) clamp(1.5rem, 5vw, 3rem)
+    clamp(4.5rem, 12vh, 8rem);
+}
+.exhib-head {
+  animation: cv-rise var(--dur-base) var(--ease-organic) both;
+}
+.exhib-title {
+  margin: 0;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1.02;
+  font-size: clamp(2rem, 6vw, 3.4rem);
+  color: var(--fg);
+  text-wrap: balance;
+}
+.exhib-intro {
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  max-width: 60ch;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.exhib-intro p {
+  margin: 0;
+  font-weight: 300;
+  line-height: 1.75;
+  font-size: clamp(1rem, 1.4vw, 1.12rem);
+  color: var(--muted);
+}
+.exhib-intro p:first-child {
+  color: var(--fg);
+}
+.exhib .cv-section:first-of-type {
+  margin-top: clamp(2.5rem, 6vw, 4rem);
 }
