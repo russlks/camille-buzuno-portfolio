@@ -6,8 +6,8 @@
    here and it updates everywhere.
 --------------------------------------------------------------------------- */
 
-// Shown small and light-gray beneath a concrete price (item 7). Reword freely.
-export const SHIPPING_NOTE = "Shipping is not included.";
+// Shown small and light-gray beneath a concrete price. Reword freely.
+export const SHIPPING_NOTE = "Worldwide shipping included";
 
 // Displayed when an available work has no price set yet.
 export const PRICE_ON_REQUEST = "Price on request";

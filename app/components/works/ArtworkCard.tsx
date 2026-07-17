@@ -77,7 +77,7 @@ export default function ArtworkCard({
             {showShipping ? (
               <span className="wk-ship">{SHIPPING_NOTE}</span>
             ) : null}
-            <BuyButton buyLink={work.buyLink} />
+            <BuyButton work={work} />
           </>
         ) : null}
       </div>

@@ -2802,6 +2802,148 @@ body {
   font-size: 1.05rem;
   color: var(--fg);
 }
+
+/* ---- Purchase modal (extends the inquiry modal) ---------------------- */
+.iq-panel--purchase {
+  width: min(720px, 100%);
+}
+.iq-field--full {
+  grid-column: 1 / -1;
+}
+
+/* Visually-hidden honeypot — off-screen, out of tab order. */
+.iq-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Auto-filled artwork summary. */
+.iq-artwork {
+  display: flex;
+  gap: 1.1rem;
+  align-items: flex-start;
+  padding-bottom: 1.4rem;
+  margin-bottom: 1.4rem;
+  border-bottom: 1px solid var(--hair);
+}
+.iq-artwork-media {
+  flex: 0 0 auto;
+  width: clamp(78px, 22vw, 108px);
+  border: 1px solid var(--hair);
+  border-radius: 8px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--fg) 3%, transparent);
+}
+.iq-artwork-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.iq-artwork-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+.iq-artwork-title {
+  margin: 0 0 0.1rem;
+  font-weight: 300;
+  font-size: clamp(1.15rem, 2.6vw, 1.45rem);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--fg);
+}
+.iq-artwork-line {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 300;
+  color: var(--muted);
+}
+.iq-artwork-price {
+  margin: 0.35rem 0 0;
+  font-size: 1.02rem;
+  font-weight: 400;
+  color: var(--fg);
+}
+.iq-artwork-status {
+  margin: 0.15rem 0 0;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.iq-artwork-status[data-status="available"] {
+  color: var(--accent);
+}
+.iq-artwork-ship {
+  margin: 0.15rem 0 0;
+  font-size: 0.76rem;
+  font-weight: 300;
+  color: var(--faint);
+}
+
+/* "Every original artwork includes" checklist. */
+.iq-includes {
+  margin-bottom: 1.4rem;
+}
+.iq-includes-title {
+  margin: 0 0 0.6rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.iq-includes ul {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem 1.1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.iq-includes li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.86rem;
+  font-weight: 300;
+  color: var(--fg);
+}
+.iq-check {
+  flex: 0 0 auto;
+  color: var(--accent);
+  font-size: 0.8rem;
+}
+@media (max-width: 480px) {
+  .iq-includes ul {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Consent checkbox. */
+.iq-agree {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.iq-agree-box {
+  flex: 0 0 auto;
+  margin-top: 0.15rem;
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--accent);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .iq-scrim,
   .iq-panel {

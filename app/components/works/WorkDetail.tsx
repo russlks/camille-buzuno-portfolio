@@ -75,7 +75,7 @@ export default function WorkDetail({
 
           {work.status === "Available" ? (
             <div className="wd-buy">
-              <BuyButton buyLink={work.buyLink} />
+              <BuyButton work={work} />
               {work.price != null ? (
                 <span className="wd-ship">{SHIPPING_NOTE}</span>
               ) : null}
