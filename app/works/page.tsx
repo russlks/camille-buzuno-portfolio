@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import SiteHeader from "../components/SiteHeader";
 import WorksArchive from "../components/works/WorksArchive";
+import ContinueExploring from "../components/ContinueExploring";
 
 export const metadata: Metadata = {
   title: "Selected Works — Camille Buzuno",
@@ -16,6 +17,10 @@ export default function WorksPage() {
           <h1 className="works-title">Selected Works</h1>
         </header>
         <WorksArchive />
+        <ContinueExploring
+          primary={{ href: "/exhibitions", label: "Exhibitions" }}
+          background
+        />
       </main>
     </div>
   );

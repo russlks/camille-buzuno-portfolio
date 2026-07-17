@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import SiteHeader from "../components/SiteHeader";
-import SoundLink from "../components/SoundLink";
+import ContinueExploring from "../components/ContinueExploring";
 
 export const metadata: Metadata = {
   title: "Artist Statement — Camille Buzuno",
@@ -52,60 +52,10 @@ export default function ArtistStatementPage() {
           ))}
         </div>
 
-        {/* Continue Exploring — end-of-chapter navigation. Not a footer: a
-            quiet invitation onward, with Selected Works as the primary next
-            destination and Home / Contact kept secondary. */}
-        <nav
-          aria-label="Continue exploring"
-          className="mt-32 border-t border-hair pt-14 sm:mt-44"
-        >
-          <p className="label-mono">Continue Exploring</p>
-
-          <SoundLink
-            href="/works"
-            note={0}
-            className="group mt-7 inline-flex items-baseline gap-3 text-fg transition-colors duration-300 hover:text-accent"
-          >
-            <span className="text-[clamp(1.7rem,4.5vw,2.5rem)] font-light leading-none tracking-tight">
-              Selected Works
-            </span>
-            <span
-              aria-hidden="true"
-              className="text-[1.35rem] transition-transform duration-300 group-hover:translate-x-1.5"
-            >
-              →
-            </span>
-          </SoundLink>
-
-          <div className="mt-12 flex items-center justify-between">
-            <SoundLink
-              href="/"
-              note={2}
-              className="group label-mono inline-flex items-center gap-2 transition-colors duration-300 hover:!text-accent"
-            >
-              <span
-                aria-hidden="true"
-                className="transition-transform duration-300 group-hover:-translate-x-1"
-              >
-                ←
-              </span>
-              Home
-            </SoundLink>
-            <SoundLink
-              href="/contact"
-              note={4}
-              className="group label-mono inline-flex items-center gap-2 transition-colors duration-300 hover:!text-accent"
-            >
-              Contact
-              <span
-                aria-hidden="true"
-                className="transition-transform duration-300 group-hover:translate-x-1"
-              >
-                →
-              </span>
-            </SoundLink>
-          </div>
-        </nav>
+        {/* Continue Exploring — the shared end-of-chapter navigation panel.
+            Selected Works is the primary next destination; the page's own
+            mermaid engraving already sits behind it, so no panel background. */}
+        <ContinueExploring primary={{ href: "/works", label: "Selected Works" }} />
       </main>
     </div>
   );
