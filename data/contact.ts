@@ -1,23 +1,29 @@
 /* ---------------------------------------------------------------------------
    Contact channels — the single source used by both the Contact page and the
-   CV. `href: null` marks a channel that isn't live yet (shown "In preparation"
-   on Contact, hidden on the CV). Edit values here and both pages update.
-
-   NOTE: email / handle are placeholders pending Camille's confirmation.
+   CV. Edit values here and both pages update. Social links (href starting with
+   http) open in a new tab; the email opens the visitor's mail client (mailto).
 --------------------------------------------------------------------------- */
 export type Channel = { name: string; value: string; href: string | null };
 
 export const CHANNELS: Channel[] = [
   {
     name: "Email",
-    value: "hello@camillebuzuno.com",
-    href: "mailto:hello@camillebuzuno.com",
+    value: "russallks.off@gmail.com",
+    href: "mailto:russallks.off@gmail.com",
   },
   {
     name: "Instagram",
-    value: "@camillebuzuno",
-    href: "https://www.instagram.com/camillebuzuno/",
+    value: "@russllks.cb",
+    href: "https://www.instagram.com/russllks.cb?igsh=MXJsbjl3cnZmbzduNw%3D%3D&utm_source=qr",
   },
-  { name: "Behance", value: "In preparation", href: null },
-  { name: "LinkedIn", value: "In preparation", href: null },
+  {
+    name: "Behance",
+    value: "behance.net/kamalemon",
+    href: "https://www.behance.net/kamalemon",
+  },
+  {
+    name: "LinkedIn",
+    value: "linkedin.com/in/camillebuzu",
+    href: "https://www.linkedin.com/in/camillebuzu?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
+  },
 ];
