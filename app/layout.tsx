@@ -29,8 +29,10 @@ export const metadata: Metadata = {
   manifest: "/site.webmanifest",
 };
 
-// Applies the saved / preferred theme before first paint to avoid a flash.
-const themeInit = `(function(){try{var q=new URLSearchParams(location.search).get('theme');if(q==='depth'||q==='light'){localStorage.setItem('theme',q);}var t=localStorage.getItem('theme');var d=t?t==='depth':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark');}catch(e){}})();`;
+// Light mode is always the default. Dark ("depth") is applied ONLY when the
+// visitor previously chose it (saved in localStorage), never from the system
+// preference. Runs before first paint so light renders immediately — no flash.
+const themeInit = `(function(){try{var q=new URLSearchParams(location.search).get('theme');if(q==='depth'||q==='light'){localStorage.setItem('theme',q);}if(localStorage.getItem('theme')==='depth'){document.documentElement.classList.add('dark');}}catch(e){}})();`;
 
 export default function RootLayout({
   children,
