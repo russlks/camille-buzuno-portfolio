@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import SiteHeader from "../components/SiteHeader";
 import NextChapterTransition from "../components/NextChapterTransition";
+import ContinueExploring from "../components/ContinueExploring";
 import {
   EXHIBITIONS,
   EXHIBITIONS_INTRO,
@@ -80,6 +81,11 @@ export default function ExhibitionsPage() {
             </div>
           </section>
         ))}
+
+        <ContinueExploring
+          primary={{ href: "/works", label: "Works" }}
+          background
+        />
       </main>
 
       {/* Arrival only — Exhibitions is the final chapter (no onward transition). */}
