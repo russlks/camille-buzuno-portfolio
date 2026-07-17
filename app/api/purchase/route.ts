@@ -8,6 +8,20 @@ import { formatPrice } from "@/data/commerce";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+// In-memory idempotency: remember recently-succeeded request keys, and track
+// in-flight ones, so a retried or double-fired submission sends exactly one
+// email (within a warm serverless instance — the client also guards).
+const RECENT_TTL_MS = 10 * 60 * 1000;
+const recentKeys = new Map<string, number>();
+const inFlight = new Set<string>();
+function seenRecently(key: string): boolean {
+  const now = Date.now();
+  for (const [k, t] of recentKeys) {
+    if (now - t > RECENT_TTL_MS) recentKeys.delete(k);
+  }
+  return recentKeys.has(key);
+}
+
 const isEmail = (v: string) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v);
 const esc = (s: string) =>
   s.replace(/[&<>"]/g, (c) =>
@@ -102,28 +116,19 @@ export async function POST(req: Request) {
 
   const s = (k: string) =>
     typeof body[k] === "string" ? (body[k] as string).trim() : "";
-  const firstName = s("firstName");
-  const lastName = s("lastName");
+  const fullName = s("fullName");
   const email = s("email");
   const country = s("country");
   const city = s("city");
   const postalCode = s("postalCode");
   const street = s("street");
   const phone = s("phone");
-  const apartment = s("apartment");
   const notes = s("notes");
   const agree = body.agree === true;
   const artworkId = s("artworkId");
+  const idempotencyKey = s("idempotencyKey");
 
-  if (
-    !firstName ||
-    !lastName ||
-    !email ||
-    !country ||
-    !city ||
-    !postalCode ||
-    !street
-  ) {
+  if (!fullName || !email || !country || !city || !postalCode || !street) {
     return Response.json(
       { error: "Please complete all required fields." },
       { status: 400 }
@@ -174,6 +179,19 @@ export async function POST(req: Request) {
     );
   }
 
+  // Idempotency: if this exact request already succeeded (retry) or is already
+  // being processed (double-fire), acknowledge it without sending again.
+  if (
+    idempotencyKey &&
+    (seenRecently(idempotencyKey) || inFlight.has(idempotencyKey))
+  ) {
+    console.log("[purchase] duplicate suppressed via idempotency key", {
+      idempotencyKey,
+    });
+    return Response.json({ ok: true });
+  }
+  if (idempotencyKey) inFlight.add(idempotencyKey);
+
   const priceLabel = formatPrice(art.price, art.currency);
   const dims = `${art.widthCm} × ${art.heightCm} cm`;
   const when =
@@ -186,7 +204,6 @@ export async function POST(req: Request) {
     req.headers.get("origin") ||
     process.env.NEXT_PUBLIC_SITE_URL ||
     "camille-buzuno-portfolio.vercel.app";
-  const fullName = `${firstName} ${lastName}`;
 
   // ---- Email to the artist ----
   const ownerText = [
@@ -201,8 +218,7 @@ export async function POST(req: Request) {
     `- Availability: ${art.status}`,
     "",
     "Customer details:",
-    `- First name: ${firstName}`,
-    `- Last name: ${lastName}`,
+    `- Full name: ${fullName}`,
     `- Email: ${email}`,
     ...(phone ? [`- Phone: ${phone}`] : []),
     "",
@@ -211,7 +227,6 @@ export async function POST(req: Request) {
     `- City: ${city}`,
     `- Postal code: ${postalCode}`,
     `- Street address: ${street}`,
-    ...(apartment ? [`- Apartment / Suite: ${apartment}`] : []),
     "",
     "Additional notes:",
     notes || "No additional notes",
@@ -239,7 +254,7 @@ export async function POST(req: Request) {
     </table>
     <h3 style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#93a2a2;border-bottom:1px solid #eee;padding-bottom:6px;margin-top:22px">Shipping address</h3>
     <table style="font-size:14px;line-height:1.5;border-collapse:collapse">
-      ${row("Country", country)}${row("City", city)}${row("Postal code", postalCode)}${row("Street", street)}${apartment ? row("Apartment / Suite", apartment) : ""}
+      ${row("Country", country)}${row("City", city)}${row("Postal code", postalCode)}${row("Street", street)}
     </table>
     <h3 style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#93a2a2;border-bottom:1px solid #eee;padding-bottom:6px;margin-top:22px">Additional notes</h3>
     <p style="font-size:14px;line-height:1.6;white-space:pre-wrap;margin:8px 0">${esc(notes || "No additional notes")}</p>
@@ -280,6 +295,7 @@ export async function POST(req: Request) {
 
   try {
     // The artist's copy is required; if it fails, report an error (never 200).
+    // This is the single, exactly-once Resend send for the request.
     await sendEmail("artist", {
       apiKey,
       from,
@@ -290,6 +306,8 @@ export async function POST(req: Request) {
       html: ownerHtml,
     });
   } catch (e) {
+    // Failed → allow a retry (do not remember the key).
+    if (idempotencyKey) inFlight.delete(idempotencyKey);
     console.error("[purchase] owner email failed — returning 500:", e);
     return Response.json(
       {
@@ -298,6 +316,12 @@ export async function POST(req: Request) {
       },
       { status: 500 }
     );
+  }
+
+  // Succeeded → remember the key so any retry/double-fire won't send again.
+  if (idempotencyKey) {
+    recentKeys.set(idempotencyKey, Date.now());
+    inFlight.delete(idempotencyKey);
   }
 
   // The customer confirmation is best-effort — the request was already received.

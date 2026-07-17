@@ -12,10 +12,15 @@ type Status = "form" | "sending" | "done";
 
 const INCLUDES = [
   "Certificate of Authenticity",
-  "Artist signature",
-  "Worldwide shipping",
-  "Secure professional packaging",
+  "Signed by the artist",
+  "Worldwide insured shipping",
+  "Museum-quality protective packaging",
 ];
+
+const genKey = () =>
+  typeof crypto !== "undefined" && crypto.randomUUID
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
 /* Shared purchase-request modal. Opened (with the selected artwork) from any
    "Buy Original" button via the purchase store. Gallery-quiet, request-based —
@@ -31,6 +36,12 @@ export default function PurchaseModal() {
   const [status, setStatus] = useState<Status>("form");
   const [error, setError] = useState<string | null>(null);
   const firstFieldRef = useRef<HTMLInputElement>(null);
+  // One idempotency key per opened request; the server uses it to guarantee a
+  // single email even if the submission is retried or double-fired.
+  const idempotencyKeyRef = useRef<string>("");
+  // Synchronous guard so two rapid submits can't both get past the async
+  // status update ("one click = one email").
+  const submittingRef = useRef(false);
 
   const open = active !== null;
 
@@ -41,6 +52,8 @@ export default function PurchaseModal() {
       setArtwork(active);
       setStatus("form");
       setError(null);
+      submittingRef.current = false;
+      idempotencyKeyRef.current = genKey();
     }
   }
 
@@ -74,21 +87,22 @@ export default function PurchaseModal() {
       form.reportValidity();
       return;
     }
-    if (status === "sending") return; // guard against duplicate submits
+    // Duplicate-submit guards: synchronous ref + status flag.
+    if (submittingRef.current || status === "sending") return;
+    submittingRef.current = true;
     setError(null);
     setStatus("sending");
     const fd = new FormData(form);
     const payload = {
       artworkId: artwork!.id,
-      firstName: String(fd.get("firstName") || ""),
-      lastName: String(fd.get("lastName") || ""),
+      idempotencyKey: idempotencyKeyRef.current,
+      fullName: String(fd.get("fullName") || ""),
       email: String(fd.get("email") || ""),
       phone: String(fd.get("phone") || ""),
       country: String(fd.get("country") || ""),
       city: String(fd.get("city") || ""),
       postalCode: String(fd.get("postalCode") || ""),
       street: String(fd.get("street") || ""),
-      apartment: String(fd.get("apartment") || ""),
       notes: String(fd.get("notes") || ""),
       agree: fd.get("agree") === "on",
       hp_check: String(fd.get("hp_check") || ""), // honeypot (must stay empty)
@@ -114,6 +128,8 @@ export default function PurchaseModal() {
         "Something went wrong while sending your request. Please try again or contact me directly."
       );
       setStatus("form");
+    } finally {
+      submittingRef.current = false;
     }
   }
 
@@ -165,7 +181,10 @@ export default function PurchaseModal() {
             </p>
             <p className="iq-artwork-line">{dims}</p>
             <p className="iq-artwork-price">{priceLabel}</p>
-            <p className="iq-artwork-status" data-status={artwork.status.toLowerCase()}>
+            <p
+              className="iq-artwork-status"
+              data-status={artwork.status.toLowerCase()}
+            >
               {artwork.status}
             </p>
             <p className="iq-artwork-ship">Worldwide shipping included</p>
@@ -197,12 +216,7 @@ export default function PurchaseModal() {
               <p className="iq-includes-title">Every original artwork includes</p>
               <ul>
                 {INCLUDES.map((i) => (
-                  <li key={i}>
-                    <span aria-hidden="true" className="iq-check">
-                      ✓
-                    </span>
-                    {i}
-                  </li>
+                  <li key={i}>{i}</li>
                 ))}
               </ul>
             </div>
@@ -224,28 +238,19 @@ export default function PurchaseModal() {
                 data-form-type="other"
               />
 
+              <p className="iq-section">Customer information</p>
+              <label className="iq-field iq-field--full">
+                <span className="iq-label">Full name *</span>
+                <input
+                  ref={firstFieldRef}
+                  name="fullName"
+                  type="text"
+                  required
+                  autoComplete="name"
+                  className="iq-input"
+                />
+              </label>
               <div className="iq-grid">
-                <label className="iq-field">
-                  <span className="iq-label">First name *</span>
-                  <input
-                    ref={firstFieldRef}
-                    name="firstName"
-                    type="text"
-                    required
-                    autoComplete="given-name"
-                    className="iq-input"
-                  />
-                </label>
-                <label className="iq-field">
-                  <span className="iq-label">Last name *</span>
-                  <input
-                    name="lastName"
-                    type="text"
-                    required
-                    autoComplete="family-name"
-                    className="iq-input"
-                  />
-                </label>
                 <label className="iq-field">
                   <span className="iq-label">Email *</span>
                   <input
@@ -257,7 +262,7 @@ export default function PurchaseModal() {
                   />
                 </label>
                 <label className="iq-field">
-                  <span className="iq-label">Phone</span>
+                  <span className="iq-label">Phone number (optional)</span>
                   <input
                     name="phone"
                     type="tel"
@@ -265,6 +270,10 @@ export default function PurchaseModal() {
                     className="iq-input"
                   />
                 </label>
+              </div>
+
+              <p className="iq-section">Shipping address</p>
+              <div className="iq-grid">
                 <label className="iq-field">
                   <span className="iq-label">Country *</span>
                   <input
@@ -296,33 +305,29 @@ export default function PurchaseModal() {
                   />
                 </label>
                 <label className="iq-field">
-                  <span className="iq-label">Apartment / Suite</span>
+                  <span className="iq-label">Street address *</span>
                   <input
-                    name="apartment"
+                    name="street"
                     type="text"
-                    autoComplete="address-line2"
+                    required
+                    autoComplete="address-line1"
                     className="iq-input"
                   />
                 </label>
               </div>
 
               <label className="iq-field iq-field--full">
-                <span className="iq-label">Street address *</span>
-                <input
-                  name="street"
-                  type="text"
-                  required
-                  autoComplete="address-line1"
-                  className="iq-input"
-                />
-              </label>
-              <label className="iq-field iq-field--full">
-                <span className="iq-label">Additional notes</span>
+                <span className="iq-label">Additional notes (optional)</span>
                 <textarea name="notes" rows={3} className="iq-input iq-textarea" />
               </label>
 
               <label className="iq-agree">
-                <input type="checkbox" name="agree" required className="iq-agree-box" />
+                <input
+                  type="checkbox"
+                  name="agree"
+                  required
+                  className="iq-agree-box"
+                />
                 <span>
                   I agree to the Terms &amp; Privacy Policy and understand that
                   this form submits a purchase request. Payment will be arranged
@@ -342,7 +347,9 @@ export default function PurchaseModal() {
                   className="iq-submit"
                   disabled={status === "sending"}
                 >
-                  {status === "sending" ? "Sending…" : "Submit Purchase Request"}
+                  {status === "sending"
+                    ? "Sending…"
+                    : "Submit Purchase Request"}
                 </button>
               </div>
             </form>
