@@ -12,9 +12,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_URL = "https://camille-buzuno-portfolio.vercel.app";
+const SITE_TITLE = "Camille Buzuno — Artist & Creative Director";
+const SITE_DESCRIPTION =
+  "Contemporary painter and creative director based in Prague. Exploring the language of the human body, color and visual storytelling.";
+
 export const metadata: Metadata = {
-  title: "Camille Buzuno — Artist",
-  description: "Camille Buzuno, artist.",
+  metadataBase: new URL(SITE_URL),
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
@@ -27,6 +33,21 @@ export const metadata: Metadata = {
     ],
   },
   manifest: "/site.webmanifest",
+  // og:image / twitter:image come from app/opengraph-image.png &
+  // app/twitter-image.png (file conventions); metadataBase makes them absolute.
+  openGraph: {
+    type: "website",
+    siteName: "Camille Buzuno",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
 };
 
 // Light mode is always the default. Dark ("depth") is applied ONLY when the
