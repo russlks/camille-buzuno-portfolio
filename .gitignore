@@ -48,3 +48,6 @@ public/images/portrait/DSCF1296.JPG
 public/images/portrait/mytale.png
 public/images/portrait/mylovely portret.JPG
 public/images/portrait/standing.jpg
+
+# but do commit the documented example
+!.env.example
