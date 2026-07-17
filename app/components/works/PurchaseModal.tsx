@@ -91,7 +91,7 @@ export default function PurchaseModal() {
       apartment: String(fd.get("apartment") || ""),
       notes: String(fd.get("notes") || ""),
       agree: fd.get("agree") === "on",
-      website: String(fd.get("website") || ""), // honeypot
+      hp_check: String(fd.get("hp_check") || ""), // honeypot (must stay empty)
     };
     try {
       const res = await fetch("/api/purchase", {
@@ -208,14 +208,20 @@ export default function PurchaseModal() {
             </div>
 
             <form className="iq-form" onSubmit={onSubmit} noValidate={false}>
-              {/* Honeypot — hidden from humans, catches bots. */}
+              {/* Honeypot — hidden from humans, catches bots. Named `hp_check`
+                  (not "website") and flagged so browser autofill and password
+                  managers leave it empty; otherwise real buyers get flagged as
+                  spam and their request is silently dropped. */}
               <input
                 type="text"
-                name="website"
+                name="hp_check"
                 className="iq-hp"
                 tabIndex={-1}
                 autoComplete="off"
                 aria-hidden="true"
+                data-lpignore="true"
+                data-1p-ignore="true"
+                data-form-type="other"
               />
 
               <div className="iq-grid">

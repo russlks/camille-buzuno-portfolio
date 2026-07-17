@@ -14,34 +14,73 @@ const esc = (s: string) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c] as string
   );
 
-async function sendEmail(payload: {
-  apiKey: string;
-  from: string;
-  to: string;
-  replyTo?: string;
-  subject: string;
-  text: string;
-  html: string;
-}) {
+async function sendEmail(
+  label: string,
+  payload: {
+    apiKey: string;
+    from: string;
+    to: string;
+    replyTo?: string;
+    subject: string;
+    text: string;
+    html: string;
+  }
+) {
+  const requestBody = {
+    from: payload.from,
+    to: [payload.to],
+    reply_to: payload.replyTo,
+    subject: payload.subject,
+    text: payload.text,
+    html: payload.html,
+  };
+  console.log(`[purchase] calling Resend (${label})`, {
+    from: payload.from,
+    to: payload.to,
+    replyTo: payload.replyTo,
+    subject: payload.subject,
+  });
+
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${payload.apiKey}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      from: payload.from,
-      to: [payload.to],
-      reply_to: payload.replyTo,
-      subject: payload.subject,
-      text: payload.text,
-      html: payload.html,
-    }),
+    body: JSON.stringify(requestBody),
   });
-  if (!res.ok) throw new Error(await res.text());
+
+  // Always read the body so we can log Resend's exact response / error.
+  const raw = await res.text();
+  let parsed: unknown = raw;
+  try {
+    parsed = raw ? JSON.parse(raw) : {};
+  } catch {
+    /* keep raw string */
+  }
+
+  if (!res.ok) {
+    console.error(`[purchase] Resend rejected the ${label} email`, {
+      status: res.status,
+      response: parsed,
+    });
+    throw new Error(`Resend ${label} email failed (HTTP ${res.status})`);
+  }
+
+  const id =
+    parsed && typeof parsed === "object" && "id" in parsed
+      ? (parsed as { id?: string }).id
+      : undefined;
+  console.log(`[purchase] Resend accepted the ${label} email`, {
+    status: res.status,
+    id,
+    response: parsed,
+  });
+  return parsed;
 }
 
 export async function POST(req: Request) {
+  console.log("[purchase] request received");
   let body: Record<string, unknown>;
   try {
     body = await req.json();
@@ -50,7 +89,14 @@ export async function POST(req: Request) {
   }
 
   // Honeypot — a bot filled the hidden field. Silently accept and drop.
-  if (typeof body.website === "string" && body.website.trim() !== "") {
+  // The field is named `hp_check` (not "website"/"url"/etc.) so browser
+  // autofill and password managers won't populate it and get real buyers
+  // wrongly flagged as spam.
+  if (typeof body.hp_check === "string" && body.hp_check.trim() !== "") {
+    console.warn(
+      "[purchase] honeypot triggered — dropping submission without sending",
+      { hp_check: body.hp_check }
+    );
     return Response.json({ ok: true });
   }
 
@@ -108,6 +154,13 @@ export async function POST(req: Request) {
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.PURCHASE_EMAIL_TO;
   const from = process.env.PURCHASE_EMAIL_FROM;
+  // Log presence only (never the secret values) so misconfiguration is visible
+  // in the Vercel Runtime Logs.
+  console.log("[purchase] email env presence", {
+    RESEND_API_KEY: Boolean(apiKey),
+    PURCHASE_EMAIL_TO: Boolean(to),
+    PURCHASE_EMAIL_FROM: Boolean(from),
+  });
   if (!apiKey || !to || !from) {
     console.error(
       "[purchase] email delivery not configured (set RESEND_API_KEY, PURCHASE_EMAIL_TO, PURCHASE_EMAIL_FROM)."
@@ -226,8 +279,8 @@ export async function POST(req: Request) {
   </div>`;
 
   try {
-    // The artist's copy is required; if it fails, report an error.
-    await sendEmail({
+    // The artist's copy is required; if it fails, report an error (never 200).
+    await sendEmail("artist", {
       apiKey,
       from,
       to,
@@ -237,19 +290,19 @@ export async function POST(req: Request) {
       html: ownerHtml,
     });
   } catch (e) {
-    console.error("[purchase] owner email failed:", e);
+    console.error("[purchase] owner email failed — returning 500:", e);
     return Response.json(
       {
         error:
           "Something went wrong while sending your request. Please try again or contact me directly.",
       },
-      { status: 502 }
+      { status: 500 }
     );
   }
 
   // The customer confirmation is best-effort — the request was already received.
   try {
-    await sendEmail({
+    await sendEmail("customer", {
       apiKey,
       from,
       to: email,
