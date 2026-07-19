@@ -41,11 +41,16 @@ const bandPath = (i: number) =>
 
 export default function OysterNav({
   decorative = false,
+  fill = false,
 }: {
   // `decorative` reuses the exact shell as a quiet, non-navigating signature
   // (no links, no sound, no hover titles) — used on the Contact page. The
   // Home usage passes nothing, so its behaviour is unchanged.
   decorative?: boolean;
+  // `fill` makes the shell fill its (positioned) container and scale to fit via
+  // the SVG viewBox — always fully visible and centred, never cropped. Used for
+  // the mobile hero, where the container is a definite-height flex area.
+  fill?: boolean;
 } = {}) {
   const router = useRouter();
   const [active, setActive] = useState(NAV[0]);
@@ -61,10 +66,12 @@ export default function OysterNav({
 
   const sizeClass = decorative
     ? "h-[clamp(150px,24vw,240px)] w-auto max-w-[72vw] overflow-visible"
-    : // Mobile + tablet: ~17% smaller than before (h 68vh/580 → 56vh/480,
-      // max-w 86vw → 74vw) to give the enlarged nav labels breathing room.
-      // Desktop (lg+) is unchanged.
-      "h-[min(56vh,480px)] w-auto max-w-[74vw] overflow-visible lg:h-[min(78vh,680px)] lg:max-w-[92vw]";
+    : fill
+      ? // Fill the positioned container; the viewBox scales the shell to fit
+        // within it (centred, never cropped). Stable across screen sizes.
+        "h-full w-full overflow-visible"
+      : // Desktop hero.
+        "h-[min(78vh,680px)] w-auto max-w-[92vw] overflow-visible";
 
   // Soft cursor parallax: nudge the shell a few units toward the pointer. On
   // the decorative Contact oyster, the cursor's distance from the centre also
@@ -87,7 +94,11 @@ export default function OysterNav({
   }
 
   return (
-    <div className="flex flex-col items-center">
+    <div
+      className={
+        fill ? "absolute inset-0 flex items-center justify-center" : "flex flex-col items-center"
+      }
+    >
       <svg
         ref={svgRef}
         viewBox={OYSTER_VIEWBOX}

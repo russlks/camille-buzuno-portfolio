@@ -6,16 +6,16 @@ import ParallaxPortrait from "./components/ParallaxPortrait";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex h-svh flex-col overflow-y-auto lg:h-auto lg:min-h-screen lg:overflow-visible">
       <ParallaxPortrait />
       <EditorialGrid />
       <SiteHeader />
 
-      <main className="relative flex flex-1 flex-col">
+      <main className="relative flex min-h-0 flex-1 flex-col">
         {/* Identity — aligned to the left grid column. On desktop it rests
             slightly above centre (~22vh from the top) with generous space
             around it; on mobile it stays near the top. */}
-        <div className="relative z-10 mx-auto w-full max-w-6xl px-6 pt-14 sm:px-10 lg:pt-[22vh]">
+        <div className="relative z-10 mx-auto w-full max-w-6xl px-6 pt-9 sm:px-10 sm:pt-14 lg:pt-[22vh]">
           <span className="label-mono">Artist</span>
           <h1 className="mt-3 font-light leading-[0.98] tracking-tight text-fg text-[clamp(2.5rem,7vw,4.25rem)]">
             Camille
@@ -31,11 +31,17 @@ export default function Home() {
           <OysterLegend />
         </div>
 
-        {/* Oyster — the main visual object. On desktop it fills the hero and
-            sits behind the name (both have room); on mobile it stacks below so
-            the two never overlap. */}
-        <div className="relative z-0 flex flex-1 items-center justify-center lg:absolute lg:inset-0">
+        {/* Desktop: the oyster fills the hero and sits behind the name. */}
+        <div className="z-0 hidden items-center justify-center lg:absolute lg:inset-0 lg:flex">
           <OysterNav />
+        </div>
+
+        {/* Mobile + tablet: the oyster is the centrepiece, filling the space
+            left below the name/legend and scaling to fit (via its viewBox) so
+            it is always fully visible and centred, never cropped. The `fill`
+            shell fills this definite-height flex area. */}
+        <div className="relative z-0 flex min-h-0 flex-1 px-6 py-3 lg:hidden">
+          <OysterNav fill />
         </div>
       </main>
 

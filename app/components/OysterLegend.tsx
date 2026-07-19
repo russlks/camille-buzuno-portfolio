@@ -18,8 +18,9 @@ export default function OysterLegend() {
     <ul className="oyster-legend lg:hidden" aria-hidden="true">
       {NAV.map((item, i) => {
         const label = item.label === "Works" ? "Selected Works" : item.label;
-        // Rings 07 & 09 are the shell's teal accents — mirror them here.
-        const accent = item.n === "07" || item.n === "09";
+        // Teal highlight only on the two sections to notice first:
+        // 02 Artist Statement and 03 Selected Works. Everything else stays grey.
+        const accent = item.n === "02" || item.n === "03";
         return (
           <li key={item.href} style={{ "--wake-i": i } as React.CSSProperties}>
             <Link
