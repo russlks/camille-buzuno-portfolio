@@ -1,6 +1,6 @@
 import SiteHeader from "./components/SiteHeader";
 import OysterNav from "./components/OysterNav";
-import OysterHero from "./components/OysterHero";
+import OysterLegend from "./components/OysterLegend";
 import EditorialGrid from "./components/EditorialGrid";
 import ParallaxPortrait from "./components/ParallaxPortrait";
 
@@ -23,18 +23,20 @@ export default function Home() {
             Buzuno
           </h1>
 
+          {/* Mobile + tablet legend — maps the shell's numbers (01–09) to
+              their sections and makes each a tappable link. Kept in normal flow
+              (not absolute) so it reserves its own space, pushing the oyster
+              gently lower and never overlapping it. Hidden on desktop (lg+),
+              where the oyster's own ring labels serve. */}
+          <OysterLegend />
         </div>
 
-        {/* Desktop: the oyster fills the hero and sits behind the name, with
-            its own hover-reveal ring titles. Unchanged. */}
-        <div className="z-0 hidden items-center justify-center lg:absolute lg:inset-0 lg:flex">
+        {/* Oyster — the main visual object. On desktop it fills the hero and
+            sits behind the name (both have room); on mobile it stacks below so
+            the two never overlap. */}
+        <div className="relative z-0 flex flex-1 items-center justify-center lg:absolute lg:inset-0">
           <OysterNav />
         </div>
-
-        {/* Mobile + tablet: the oyster stays the centered focal point, with the
-            nav labels threading off its growth-ring numbers on the left flank.
-            A second, immediately-legible way to navigate. */}
-        <OysterHero className="relative z-0 flex flex-1 lg:hidden" />
       </main>
 
       <footer className="relative">

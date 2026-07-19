@@ -193,89 +193,92 @@ body {
 
 /* Mobile navigation legend — a quiet museum caption mapping 01–09 to their
    sections. Deliberately faint so it never competes with the shell. */
-/* ---------------------------------------------------------------------------
-   Mobile + tablet homepage composition (OysterHero) — the oyster stays the
-   centered focal point and the nav labels thread off its growth-ring numbers
-   on the left flank. Desktop uses its own hover-reveal oyster; this whole
-   layer is only mounted <lg (component is lg:hidden).
---------------------------------------------------------------------------- */
-.omn {
-  position: relative;
-  align-items: center;
-  justify-content: center;
+.oyster-legend {
+  list-style: none;
+  margin: 1.75rem 0 0;
+  padding: 0;
+  max-width: 24rem;
+  display: none; /* mobile + iPad only — shown via the media query below */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.15rem 1rem;
+  letter-spacing: 0.03em;
 }
-/* Connector threads — extremely thin, light, part of the composition. Painted
-   above the shell but below the labels; never intercept taps. */
-.omn-threads {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  overflow: visible;
+@media (max-width: 1023px) {
+  .oyster-legend {
+    display: grid;
+  }
 }
-.omn-thread {
-  stroke: var(--fg);
-  stroke-width: 0.6;
-  opacity: 0.16;
-  vector-effect: non-scaling-stroke;
+.oyster-legend li {
+  display: flex;
 }
-.omn-thread--primary {
-  opacity: 0.28;
-}
-.omn-thread--muted {
-  opacity: 0.08;
-}
-
-/* Labels — the left-flank navigation. Light, thin, immediately legible; a
-   comfortably large invisible tap area without any button chrome. */
-.omn-label {
-  position: absolute;
-  left: 0;
-  transform: translateY(-50%);
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5em;
-  max-width: 62vw;
-  min-height: 44px; /* comfortable touch target */
-  padding: 0.6rem 0.7rem 0.6rem 0.15rem;
-  color: var(--muted);
+/* Each label is a real link with a comfortably large touch area. The negative
+   margin lets the invisible tap padding overlap the grid gutters so the text
+   keeps its light, airy spacing while the target stays ≥ ~44px tall. */
+.oyster-legend-link {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6em;
+  width: 100%;
+  min-height: 44px;
+  padding: 0.55rem 0.4rem;
+  margin: -0.3rem -0.4rem;
+  font-size: 13.5px;
+  line-height: 1.3;
+  color: var(--faint);
+  opacity: 0.62;
   text-decoration: none;
   -webkit-tap-highlight-color: transparent;
-  transition: opacity 0.45s ease, color 0.45s ease;
+  transition: opacity 0.5s ease, color 0.5s ease;
+  /* Lights up in sequence with its growth band's wake (same delay/duration). */
+  animation: legend-wake 1.15s ease-in-out;
+  animation-delay: calc(0.5s + var(--wake-i, 0) * 0.16s);
 }
-.omn-label:active {
-  opacity: 0.55;
-}
-.omn-n {
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  color: var(--faint);
-  flex: 0 0 auto;
-}
-.omn-t {
-  font-weight: 300;
-  font-size: 14px;
-  line-height: 1.2;
-  letter-spacing: 0.01em;
-}
-/* Emphasis tiers — the homepage leads with the artistic practice. Primary is
-   crisp and dark; secondary recedes; muted (Commercial Production) is quietest
-   so it never competes. Palette only — no new colours. */
-.omn-label--primary .omn-t {
+/* Tap feedback — a subtle brightening, no button chrome. */
+.oyster-legend-link:active {
+  opacity: 0.95;
   color: var(--fg);
-  font-size: 15px;
 }
-.omn-label--primary .omn-n {
-  color: var(--muted);
+/* Rings 07 & 09 keep the shell's teal accent. */
+.oyster-legend-link--accent {
+  color: rgba(var(--oyster-rgb), 0.9);
+  opacity: 0.75;
+  animation-name: legend-wake-accent;
 }
-.omn-label--secondary .omn-t {
-  color: var(--muted);
+.oyster-legend-n {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
 }
-.omn-label--muted .omn-t {
-  color: var(--faint);
-  font-size: 13px;
+.oyster-legend-dash {
+  opacity: 0.4;
+}
+.oyster-legend-label {
+  font-weight: 300;
+}
+
+/* Full-label highlight synced to the growth-band wake — number and title
+   brighten together, then settle back to the resting soft grey. */
+@keyframes legend-wake {
+  0%,
+  100% {
+    opacity: 0.62;
+    color: var(--faint);
+  }
+  45% {
+    opacity: 1;
+    color: var(--fg);
+  }
+}
+@keyframes legend-wake-accent {
+  0%,
+  100% {
+    opacity: 0.75;
+    color: rgba(var(--oyster-rgb), 0.9);
+  }
+  45% {
+    opacity: 1;
+    color: rgba(var(--oyster-rgb), 1);
+  }
 }
 
 /* ---------------------------------------------------------------------------
