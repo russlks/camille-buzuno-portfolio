@@ -1,8 +1,8 @@
 import SiteHeader from "./components/SiteHeader";
 import OysterNav from "./components/OysterNav";
+import OysterLegend from "./components/OysterLegend";
 import EditorialGrid from "./components/EditorialGrid";
 import ParallaxPortrait from "./components/ParallaxPortrait";
-import { NAV } from "./lib/nav";
 
 export default function Home() {
   return (
@@ -23,24 +23,12 @@ export default function Home() {
             Buzuno
           </h1>
 
-          {/* Mobile-only legend — maps the shell's numbers (01–09) to their
-              sections so the numbering reads clearly. Museum-caption styling:
-              tiny, faint, quiet; never competes with the shell. Hidden from
-              screen readers (the shell already exposes an ordered nav list). */}
-          <ul
-            className="oyster-legend absolute left-6 top-full mt-6 sm:left-10 lg:hidden"
-            aria-hidden="true"
-          >
-            {NAV.map((item) => (
-              <li key={item.href}>
-                <span className="oyster-legend-n">{item.n}</span>
-                <span className="oyster-legend-dash">—</span>
-                <span>
-                  {item.label === "Works" ? "Selected Works" : item.label}
-                </span>
-              </li>
-            ))}
-          </ul>
+          {/* Mobile + tablet legend — maps the shell's numbers (01–09) to
+              their sections and makes each a tappable link. Kept in normal flow
+              (not absolute) so it reserves its own space, pushing the oyster
+              gently lower and never overlapping it. Hidden on desktop (lg+),
+              where the oyster's own ring labels serve. */}
+          <OysterLegend />
         </div>
 
         {/* Oyster — the main visual object. On desktop it fills the hero and

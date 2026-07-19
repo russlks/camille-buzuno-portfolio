@@ -61,7 +61,10 @@ export default function OysterNav({
 
   const sizeClass = decorative
     ? "h-[clamp(150px,24vw,240px)] w-auto max-w-[72vw] overflow-visible"
-    : "h-[min(68vh,580px)] w-auto max-w-[86vw] overflow-visible lg:h-[min(78vh,680px)] lg:max-w-[92vw]";
+    : // Mobile + tablet: ~17% smaller than before (h 68vh/580 → 56vh/480,
+      // max-w 86vw → 74vw) to give the enlarged nav labels breathing room.
+      // Desktop (lg+) is unchanged.
+      "h-[min(56vh,480px)] w-auto max-w-[74vw] overflow-visible lg:h-[min(78vh,680px)] lg:max-w-[92vw]";
 
   // Soft cursor parallax: nudge the shell a few units toward the pointer. On
   // the decorative Contact oyster, the cursor's distance from the centre also
