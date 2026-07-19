@@ -275,7 +275,7 @@ export async function POST(req: Request) {
     "Purchase summary:",
     `- Artwork: ${art.displayTitle}`,
     `- Price: ${priceLabel}`,
-    "- Worldwide shipping included",
+    "- Worldwide insured shipping included",
     "",
     "Camille Buzuno",
   ].join("\n");
@@ -287,7 +287,7 @@ export async function POST(req: Request) {
     <div style="border-top:1px solid #eee;border-bottom:1px solid #eee;padding:16px 0;margin:20px 0">
       <p style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#0d8f88;margin:0 0 10px">Purchase summary</p>
       <table style="font-size:14px;border-collapse:collapse">
-        ${row("Artwork", art.displayTitle)}${row("Price", priceLabel)}<tr><td style="padding:4px 16px 4px 0;color:#55686a">Shipping</td><td style="padding:4px 0;color:#0c0e0f">Worldwide shipping included</td></tr>
+        ${row("Artwork", art.displayTitle)}${row("Price", priceLabel)}<tr><td style="padding:4px 16px 4px 0;color:#55686a">Shipping</td><td style="padding:4px 0;color:#0c0e0f">Worldwide insured shipping included</td></tr>
       </table>
     </div>
     <p style="margin:20px 0 0">Camille Buzuno</p>

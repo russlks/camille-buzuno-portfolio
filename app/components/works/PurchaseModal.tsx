@@ -187,7 +187,7 @@ export default function PurchaseModal() {
             >
               {artwork.status}
             </p>
-            <p className="iq-artwork-ship">Worldwide shipping included</p>
+            <p className="iq-artwork-ship">Worldwide insured shipping included</p>
           </div>
         </div>
 
