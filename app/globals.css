@@ -1971,7 +1971,10 @@ body {
 .cv-download {
   margin-top: clamp(3rem, 6vw, 4.5rem);
   display: flex;
+  flex-wrap: wrap; /* side by side on desktop; stack when too narrow */
   justify-content: center;
+  align-items: center;
+  gap: clamp(0.85rem, 2.2vw, 1.25rem);
 }
 
 /* Tablet / mobile — stack date above info; keep hierarchy; no sideways scroll. */

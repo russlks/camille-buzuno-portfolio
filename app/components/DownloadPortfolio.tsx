@@ -10,10 +10,14 @@ export default function DownloadPortfolio({
   href,
   label = "Download Full Portfolio",
   className = "",
+  downloadName,
 }: {
   href?: string;
   label?: string;
   className?: string;
+  // Optional clean filename for the saved file (e.g. "Camille_Buzuno.pdf").
+  // When omitted the browser uses the file's own name — matching prior behaviour.
+  downloadName?: string;
 }) {
   const cls = `dl-portfolio ${className}`.trim();
   const inner = (
@@ -27,7 +31,7 @@ export default function DownloadPortfolio({
 
   if (href) {
     return (
-      <a href={href} download className={cls}>
+      <a href={href} download={downloadName ?? true} className={cls}>
         {inner}
       </a>
     );

@@ -16,6 +16,11 @@ import {
   type CvEntry,
 } from "@/data/cv";
 
+// The art-portfolio PDF, served from public/. A clean, space-free, lowercase-
+// stable path so the link works on Vercel; the file downloads as
+// "Camille_Buzuno_Art_Portfolio.pdf" (see the button's downloadName).
+const PORTFOLIO_PDF = "/Camille_Buzuno_Art_Portfolio.pdf";
+
 export const metadata: Metadata = {
   title: "CV — Kamilya Buzunova",
 };
@@ -232,6 +237,11 @@ export default function CvPage() {
 
         <div className="cv-download">
           <DownloadPortfolio href={CV_PDF} label="Download CV" />
+          <DownloadPortfolio
+            href={PORTFOLIO_PDF}
+            label="Download Portfolio"
+            downloadName="Camille_Buzuno_Art_Portfolio.pdf"
+          />
         </div>
       </main>
 
