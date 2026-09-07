@@ -15,7 +15,7 @@ export default function Home() {
         {/* Identity — aligned to the left grid column. On desktop it rests
             slightly above centre (~22vh from the top) with generous space
             around it; on mobile it stays near the top. */}
-        <div className="relative z-10 mx-auto w-full max-w-6xl px-6 pt-9 sm:px-10 sm:pt-14 lg:pt-[22vh]">
+        <div className="relative z-10 mx-auto w-full max-w-6xl px-6 pt-9 sm:px-10 sm:pt-14 lg:-translate-x-[5vw] lg:pt-[22vh]">
           <span className="label-mono">Artist</span>
           <h1 className="mt-3 font-light leading-[0.98] tracking-tight text-fg text-[clamp(2.5rem,7vw,4.25rem)]">
             Camille
@@ -32,7 +32,7 @@ export default function Home() {
         </div>
 
         {/* Desktop: the oyster fills the hero and sits behind the name. */}
-        <div className="z-0 hidden items-center justify-center lg:absolute lg:inset-0 lg:flex">
+        <div className="z-0 hidden items-center justify-center lg:absolute lg:inset-0 lg:flex lg:translate-x-[7vw]">
           <OysterNav />
         </div>
 
