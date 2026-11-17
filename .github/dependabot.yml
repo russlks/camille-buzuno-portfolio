@@ -1,0 +1,20 @@
+# Раз в неделю проверяет устаревшие / уязвимые npm-пакеты. Если нужно обновление, GitHub сам открывает pull request.
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    # Мажорные версии ломают совместимость — их обновляем вручную.
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      minor-and-patch:
+        update-types: ["minor", "patch"]
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"

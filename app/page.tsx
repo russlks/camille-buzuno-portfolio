@@ -48,7 +48,10 @@ export default function Home() {
       <footer className="relative">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5 sm:px-10">
           <span className="label-mono !text-[0.6rem]">© 2026 Camille Buzuno</span>
-          <span className="label-mono !text-[0.6rem]">Artist Portfolio</span>
+          <span className="label-mono flex gap-4 !text-[0.6rem]">
+            <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms</a>
+          </span>
         </div>
       </footer>
     </div>

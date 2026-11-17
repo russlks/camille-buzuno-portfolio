@@ -224,6 +224,12 @@ export default function InquiryModal({
               </p>
             ) : null}
 
+            <p className="iq-agree">
+              By sending this request you agree that I process your details to
+              reply, as described in the{" "}
+              <a href="/privacy" target="_blank" rel="noopener" className="underline">Privacy Policy</a>.
+            </p>
+
             <div className="iq-actions">
               <button
                 type="submit"

@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const SITE_URL = "https://camille-buzuno-portfolio.vercel.app";
+const SITE_URL = "https://www.camillebuzuno.com";
 const SITE_TITLE = "Camille Buzuno — Artist & Creative Director";
 const SITE_DESCRIPTION =
   "Contemporary painter and creative director based in Prague. Exploring the language of the human body, color and visual storytelling.";
@@ -34,6 +34,7 @@ export const metadata: Metadata = {
     ],
   },
   manifest: "/site.webmanifest",
+  alternates: { canonical: "/" },
   // og:image / twitter:image come from app/opengraph-image.png &
   // app/twitter-image.png (file conventions); metadataBase makes them absolute.
   openGraph: {

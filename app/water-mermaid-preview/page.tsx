@@ -1,5 +1,8 @@
 import WaterMermaid from "../components/WaterMermaid";
 
+// Служебная тестовая страница — не для поисковиков.
+export const metadata = { robots: { index: false, follow: false } };
+
 /* Isolated test page for the WaterMermaid prototype. Not linked from the site.
    Off-white background + a faint pale-blue blurry area + sample content so we
    can watch how the element behaves around headings, text and links. */

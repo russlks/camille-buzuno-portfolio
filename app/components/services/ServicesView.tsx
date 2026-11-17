@@ -66,7 +66,10 @@ export default function ServicesView() {
             >
               {booking ? "Redirecting…" : CONSULTATION.cta}
             </button>
-            <p className="svc-note">Secure checkout via Stripe.</p>
+            <p className="svc-note">
+              Secure checkout via Stripe. By booking you agree to the{" "}
+              <a href="/terms" className="underline">Terms</a>.
+            </p>
             {bookError ? (
               <p className="svc-error" role="alert">
                 {bookError}

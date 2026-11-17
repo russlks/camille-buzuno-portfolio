@@ -8,8 +8,8 @@ export type Channel = { name: string; value: string; href: string | null };
 export const CHANNELS: Channel[] = [
   {
     name: "Email",
-    value: "russallks.off@gmail.com",
-    href: "mailto:russallks.off@gmail.com",
+    value: "hello@camillebuzuno.com",
+    href: "mailto:hello@camillebuzuno.com",
   },
   {
     name: "Instagram",

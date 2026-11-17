@@ -329,7 +329,11 @@ export default function PurchaseModal() {
                   className="iq-agree-box"
                 />
                 <span>
-                  I agree to the Terms &amp; Privacy Policy and understand that
+                  I agree to the{" "}
+                  <a href="/terms" target="_blank" rel="noopener" className="underline">Terms</a>{" "}
+                  &amp;{" "}
+                  <a href="/privacy" target="_blank" rel="noopener" className="underline">Privacy Policy</a>{" "}
+                  and understand that
                   this form submits a purchase request. Payment will be arranged
                   separately after the artwork’s availability is confirmed.
                 </span>
